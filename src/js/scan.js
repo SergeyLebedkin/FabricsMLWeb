@@ -321,6 +321,8 @@ class ImageInfoRegionsEditor {
         if (this.imageInfo != imageInfo) {
             this.imageInfo = imageInfo;
             this.updateImageBuffer();
+            this.updateIntensity();
+            this.drawIntensityHistogram();
         }
     }
 
@@ -374,7 +376,17 @@ class ImageInfoRegionsEditor {
 
         // redraw
         this.redraw();
+        this.updateIntensityHistogram();
         this.drawIntensityHistogram();
+    }
+
+    // updateIntensityHistogram
+    updateIntensityHistogram() {
+        // check for null
+        if (this.imageInfo === null) return;
+
+        // intensity histogram values
+        this.intensityHistogramValues = this.imageInfo.getIntensity();
     }
 
     // updateImageBuffer

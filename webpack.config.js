@@ -22,8 +22,11 @@ module.exports = {
     module: {
         rules: [{
             test: /\.(ts|tsx)$/,
-            loader: "ts-loader"
+            use: 'ts-loader'
         }]
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
         new CleanWebpackPlugin(),
