@@ -517,7 +517,7 @@ var gImageInfoRegionsEditor = new ImageInfoRegionsEditor(image_canvas_panel, his
 
 // buttonLoadImageFileClick
 function buttonLoadImageFileClick(event) {
-    inputImageFile.accept = '.tif;.tiff';
+    inputImageFile.accept = ".tif,.tiff";
     inputImageFile.onchange = function (event) {
         for (var i = 0; i < event.currentTarget.files.length; i++) {
             // create image info
