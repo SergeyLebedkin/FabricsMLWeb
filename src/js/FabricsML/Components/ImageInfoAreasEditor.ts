@@ -1,7 +1,7 @@
-import { ImageInfo } from "./ImageInfo"
-import { AreaSelectionMode } from "./AreaSelectionMode"
-import { AreaSelectionInfo } from "./AreaSelectionInfo"
-import { MouseSelectionMode } from "./MouseSelectionMode"
+import { ImageInfo } from "../Types/ImageInfo"
+import { AreaSelectionMode } from "../Types/AreaSelectionMode"
+import { AreaSelectionInfo } from "../Types/AreaSelectionInfo"
+import { MouseSelectionMode } from "../Types/MouseSelectionMode"
 
 // ImageInfoRegionsEditor
 export class ImageInfoAreasEditor {
@@ -10,7 +10,7 @@ export class ImageInfoAreasEditor {
 
     // image parameters
     private imageInfo: ImageInfo = null;
-    private imageScale: number = 1.0;
+    public imageScale: number = 1.0;
     private showOriginalImage: boolean = false;
 
     // mouse parameters
@@ -31,7 +31,6 @@ export class ImageInfoAreasEditor {
     constructor(parent: HTMLDivElement) {
         // setup parent
         this.parent = parent;
-        (this.parent as any).imageInfoRegionsEditor = this;
 
         // image parameters
         this.imageInfo = null;
@@ -46,7 +45,7 @@ export class ImageInfoAreasEditor {
         // selection area info
         this.areaSelectionStarted = false;
         this.areaSelectionMode = AreaSelectionMode.INCLUDE;
-        this.areaSelectionInfo = new AreaSelectionInfo(0, 0, 1, 1);
+        this.areaSelectionInfo = new AreaSelectionInfo(0, 0, 0, 0);
 
         // create image canvas
         this.imageCanvas = document.createElement("canvas");
@@ -58,16 +57,19 @@ export class ImageInfoAreasEditor {
     // onMouseUp
     public onMouseUp(event: MouseEvent): void {
         console.log("onMouseUp");
+        console.log(event);
     }
 
     // onMouseDown
     public onMouseDown(event: MouseEvent): void {
         console.log("onMouseDown");
+        console.log(event);
     }
 
     // onMouseMove
     public onMouseMove(event: MouseEvent): void {
         console.log("onMouseMove");
+        console.log(event);
     }
 
     // setImageInfo

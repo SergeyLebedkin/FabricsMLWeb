@@ -142,7 +142,7 @@ export class ImageInfo {
 
         // update image data
         this.intensity.fill(0);
-        for (var i = 0; i < canvasImageData.data.length; i += 4) {
+        for (let i = 0; i < canvasImageData.data.length; i += 4) {
             if (canvasImageData.data[i] > 0) {
                 this.intensity[canvasImageData.data[i]]++;
             }
