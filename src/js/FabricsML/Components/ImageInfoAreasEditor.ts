@@ -31,22 +31,18 @@ export class ImageInfoAreasEditor {
     constructor(parent: HTMLDivElement) {
         // setup parent
         this.parent = parent;
-
         // image parameters
         this.imageInfo = null;
         this.imageScale = 1.0;
         this.showOriginalImage = false;
-
         // selection parameters
         this.mousePrevDragX = 0;
         this.mousePrevDragY = 0;
         this.mouseSelectionMode = MouseSelectionMode.DRAW;
-
         // selection area info
         this.areaSelectionStarted = false;
         this.areaSelectionMode = AreaSelectionMode.INCLUDE;
         this.areaSelectionInfo = new AreaSelectionInfo(0, 0, 0, 0);
-
         // create image canvas
         this.imageCanvas = document.createElement("canvas");
         this.imageCanvas.style.border = "1px solid orange";
@@ -56,20 +52,74 @@ export class ImageInfoAreasEditor {
 
     // onMouseUp
     public onMouseUp(event: MouseEvent): void {
-        console.log("onMouseUp");
-        console.log(event);
+        // proceed selection
+        if (this.areaSelectionStarted && (this.mouseSelectionMode === MouseSelectionMode.DRAW)) {
+            // selection region normalize and scale
+            this.areaSelectionInfo.normalize();
+            this.areaSelectionInfo.scale(1.0 / this.imageScale);
+            // add new region info
+            let areaSelectionInfo = this.areaSelectionInfo.clone();
+            areaSelectionInfo.trim(0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            // add and update region
+            this.imageInfo.addSelectionArea(areaSelectionInfo);
+            this.imageInfo.updateBordersCanvas();
+            this.imageInfo.updateHilightCanvas();
+            this.imageInfo.updateIntensity();
+            // draw image info
+            this.drawImageInfo();
+        }
+        // area selection finished
+        this.areaSelectionStarted = false;
     }
 
     // onMouseDown
     public onMouseDown(event: MouseEvent): void {
-        console.log("onMouseDown");
-        console.log(event);
+        if (this.imageInfo !== null) {
+            // get bounding client rect
+            let rect = this.imageCanvas.getBoundingClientRect();
+            let mousePosX = event.clientX - rect.left;
+            let mousePosY = event.clientY - rect.top;
+            // set area selection info
+            this.areaSelectionInfo.x = mousePosX;
+            this.areaSelectionInfo.y = mousePosY;
+            this.areaSelectionInfo.width = 0;
+            this.areaSelectionInfo.height = 0;
+            this.areaSelectionInfo.areaSelectionMode = this.areaSelectionMode;
+            // set mouse base coords
+            this.mousePrevDragX = event.screenX;
+            this.mousePrevDragY = event.screenY;
+            // set area selection started
+            this.areaSelectionStarted = true;
+        }
     }
 
     // onMouseMove
     public onMouseMove(event: MouseEvent): void {
-        console.log("onMouseMove");
-        console.log(event);
+        // draw mode
+        if (this.areaSelectionStarted && (this.mouseSelectionMode === MouseSelectionMode.DRAW)) {
+            // get bounding client rect
+            let rect = this.imageCanvas.getBoundingClientRect();
+            let mousePosX = event.clientX - rect.left;
+            let mousePosY = event.clientY - rect.top;
+            // update area selection info
+            this.areaSelectionInfo.width = mousePosX - this.areaSelectionInfo.x;
+            this.areaSelectionInfo.height = mousePosY - this.areaSelectionInfo.y;
+            // redraw stuff
+            this.drawImageInfo();
+            this.drawSelectionArea();
+        };
+        // drag image
+        if (this.areaSelectionStarted && (this.mouseSelectionMode === MouseSelectionMode.DRAG)) {
+            // get mouse delta move
+            let mouseDeltaX = this.mousePrevDragX - event.screenX;
+            let mouseDeltaY = this.mousePrevDragY - event.screenY;
+            // scroll parent
+            this.parent.scrollLeft += mouseDeltaX;
+            this.parent.scrollTop += mouseDeltaY;
+            // store new mouse coords
+            this.mousePrevDragX = event.screenX;
+            this.mousePrevDragY = event.screenY;
+        }
     }
 
     // setImageInfo
@@ -102,6 +152,11 @@ export class ImageInfoAreasEditor {
         this.mouseSelectionMode = mouseSelectionMode;
     }
 
+    // setAreaSelectionMode
+    public setAreaSelectionMode(areaSelectionMode: AreaSelectionMode): void {
+        this.areaSelectionMode = areaSelectionMode;
+    }
+
     // setShowOriginalImage
     public setShowOriginalImage(showOriginal: boolean): void {
         this.showOriginalImage = showOriginal;
@@ -128,7 +183,8 @@ export class ImageInfoAreasEditor {
             this.imageCanvas.height = this.imageInfo.canvasImage.height * this.imageScale;
             // draw original image
             this.imageCanvasCtx.globalAlpha = 1.0;
-            this.imageCanvasCtx.drawImage(this.imageInfo.canvasImage, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            //this.imageCanvasCtx.drawImage(this.imageInfo.canvasImage, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            this.imageCanvasCtx.drawImage(this.imageInfo.canvasMask, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
             if (!this.showOriginalImage) {
                 // draw hi-lited canvas
                 this.imageCanvasCtx.globalAlpha = 0.9;

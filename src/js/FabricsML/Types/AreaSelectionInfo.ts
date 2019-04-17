@@ -21,6 +21,18 @@ export class AreaSelectionInfo {
         this.areaSelectionMode = AreaSelectionMode.INCLUDE
     }
 
+    // constructor
+    clone(): AreaSelectionInfo {
+        // create new area selection info
+        let areaSelectionInfo = new AreaSelectionInfo(
+            this.x, this.y, this.width, this.height);
+        // copy area selection mode
+        areaSelectionInfo.areaSelectionMode = this.areaSelectionMode;
+        // return new element
+        return areaSelectionInfo;
+    }
+
+
     // normalize region
     public normalize(): void {
         // horizontal normalize

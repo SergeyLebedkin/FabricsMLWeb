@@ -3,13 +3,16 @@ import { AreaSelectionMode } from "./AreaSelectionMode"
 
 // ImageInfo
 export class ImageInfo {
-    // parameters
+    // file reference
     public fileRef: File = null;
+    // canvases
     public canvasImage: HTMLCanvasElement = null;
     public canvasMask: HTMLCanvasElement = null;
     public canvasHiLight: HTMLCanvasElement = null;
     public canvasBorders: HTMLCanvasElement = null;
+    // area selections
     public areaSelectionInfos: Array<AreaSelectionInfo> = [];
+    // intensity
     public intensity: Array<number> = Array<number>(256);
     public intensityLow: number = 90;
     public intensityMedium: number = 150;
@@ -17,12 +20,16 @@ export class ImageInfo {
 
     // constructor
     constructor(fileRef: File) {
+        // file reference
         this.fileRef = fileRef;
+        // canvases
         this.canvasImage = document.createElement("canvas");
         this.canvasMask = document.createElement("canvas");
         this.canvasHiLight = document.createElement("canvas");
         this.canvasBorders = document.createElement("canvas");
+        // area selections
         this.areaSelectionInfos = [];
+        // intensity
         this.intensity.fill(0);
         this.intensityLow = 90;
         this.intensityMedium = 150;
@@ -30,7 +37,7 @@ export class ImageInfo {
     }
 
     // copyFromCanvas
-    public copyFromCanvas(canvas: HTMLCanvasElement) {
+    public copyFromCanvas(canvas: HTMLCanvasElement): void {
         // set sizes
         this.canvasImage.width = canvas.width;
         this.canvasImage.height = canvas.height;

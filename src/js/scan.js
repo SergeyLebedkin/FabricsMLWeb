@@ -79,17 +79,17 @@ function buttonScaleUpClick(event) {
 
 // rangeIntensityLowOnChange
 function rangeIntensityLowOnChange(event) {
-    gImageInfoAreasEditor.setIntensityLow(rangeIntensityLow.value);
+    //gImageInfoAreasEditor.setIntensityLow(rangeIntensityLow.value);
 }
 
 // rangeIntensityMediumOnChange
 function rangeIntensityMediumOnChange(event) {
-    gImageInfoAreasEditor.setIntensityMedium(rangeIntensityMedium.value);
+    //gImageInfoAreasEditor.setIntensityMedium(rangeIntensityMedium.value);
 }
 
 // rangeIntensityHighOnChange
 function rangeIntensityHighOnChange(event) {
-    gImageInfoAreasEditor.setIntensityHigh(rangeIntensityHigh.value);
+    //gImageInfoAreasEditor.setIntensityHigh(rangeIntensityHigh.value);
 }
 
 // checkboxShowOriginalOnChange
@@ -99,12 +99,12 @@ function checkboxShowOriginalOnChange(event) {
 
 // radioIncludeOnClick
 function radioIncludeOnClick(event) {
-    gImageInfoAreasEditor.selectionAreaMode = AreaSelectionMode.INCLUDE;
+    gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.INCLUDE);
 }
 
 // radioExcludeOnClick
 function radioExcludeOnClick(event) {
-    gImageInfoAreasEditor.selectionAreaMode = AreaSelectionMode.EXCLUDE;
+    gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.EXCLUDE);
 }
 
 // radioDrawOnClick
@@ -163,20 +163,16 @@ window.onload = (event) => {
     buttonSaveFabrics.onclick = buttonSaveFabricsOnClick;
     buttonScaleDown.onclick = buttonScaleDownClick;
     buttonScaleUp.onclick = buttonScaleUpClick;
+
+    // image_canvas_panel
+    document.addEventListener("mousemove", (event) => gImageInfoAreasEditor.onMouseMove(event));
+    document.addEventListener("mousedown", (event) => gImageInfoAreasEditor.onMouseDown(event));
+    document.addEventListener("mouseup", (event) => gImageInfoAreasEditor.onMouseUp(event));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // utils
 ///////////////////////////////////////////////////////////////////////////////
-
-// get mause position for element
-function getMousePosByElement(node, event) {
-    var rect = node.getBoundingClientRect();
-    return {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top
-    }
-}
 
 // downloadFile
 function downloadFile(text, name, type) {
