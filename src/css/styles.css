@@ -38,6 +38,10 @@ html, body {
     flex-direction: row
 }
 
+#histogram_canvas_panel {
+    text-align: center;
+}
+
 #image_canvas_panel {
     flex-direction: row;
     overflow: auto;

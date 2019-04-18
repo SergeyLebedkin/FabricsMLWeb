@@ -1,11 +1,13 @@
-import Tiff from "tiff.js"
-import { ImageInfo } from "./FabricsML/Types/ImageInfo"
-import { AreaSelectionMode } from "./FabricsML/Types/AreaSelectionMode"
-import { MouseSelectionMode } from "./FabricsML/Types/MouseSelectionMode"
-import { ImageInfoAreasEditor } from "./FabricsML/Components/ImageInfoAreasEditor"
+import Tiff from "tiff.js";
+import { ImageInfo } from "./FabricsML/Types/ImageInfo";
+import { AreaSelectionMode } from "./FabricsML/Types/AreaSelectionMode";
+import { MouseSelectionMode } from "./FabricsML/Types/MouseSelectionMode";
+import { ImageInfoAreasEditor } from "./FabricsML/Components/ImageInfoAreasEditor";
+import { ImageInfoIntensityHistViewer } from "./FabricsML/Components/ImageInfoIntensityHistViewer";
 
 let gImageInfoList = [];
 let gImageInfoAreasEditor = null;
+let gImageInfoIntensityHistViewer = null;
 
 ///////////////////////////////////////////////////////////////////////////////
 // EVENTS
@@ -30,6 +32,9 @@ function buttonLoadImageFileClick(event) {
                 // image mask canvas
                 if (!gImageInfoAreasEditor.imageInfo)
                     gImageInfoAreasEditor.setImageInfo(event.currentTarget.imageInfo);
+
+                if (!gImageInfoIntensityHistViewer.imageInfo)
+                    gImageInfoIntensityHistViewer.setImageInfo(event.currentTarget.imageInfo);
             }
             fileReader.readAsArrayBuffer(imageInfo.fileRef);
 
@@ -79,17 +84,32 @@ function buttonScaleUpClick(event) {
 
 // rangeIntensityLowOnChange
 function rangeIntensityLowOnChange(event) {
-    //gImageInfoAreasEditor.setIntensityLow(rangeIntensityLow.value);
+    if (gImageInfoIntensityHistViewer.imageInfo) {
+        gImageInfoIntensityHistViewer.imageInfo.setIntensityLow(rangeIntensityLow.value);
+        gImageInfoIntensityHistViewer.imageInfo.updateHilightCanvasAndIntensity();
+        gImageInfoIntensityHistViewer.drawHistogram();
+        gImageInfoAreasEditor.drawImageInfo();
+    }
 }
 
 // rangeIntensityMediumOnChange
 function rangeIntensityMediumOnChange(event) {
-    //gImageInfoAreasEditor.setIntensityMedium(rangeIntensityMedium.value);
+    if (gImageInfoIntensityHistViewer.imageInfo) {
+        gImageInfoIntensityHistViewer.imageInfo.setIntensityMedium(rangeIntensityMedium.value);
+        gImageInfoIntensityHistViewer.imageInfo.updateHilightCanvasAndIntensity();
+        gImageInfoIntensityHistViewer.drawHistogram();
+        gImageInfoAreasEditor.drawImageInfo();
+    }
 }
 
 // rangeIntensityHighOnChange
 function rangeIntensityHighOnChange(event) {
-    //gImageInfoAreasEditor.setIntensityHigh(rangeIntensityHigh.value);
+    if (gImageInfoIntensityHistViewer.imageInfo) {
+        gImageInfoIntensityHistViewer.imageInfo.setIntensityHigh(rangeIntensityHigh.value);
+        gImageInfoIntensityHistViewer.imageInfo.updateHilightCanvasAndIntensity();
+        gImageInfoIntensityHistViewer.drawHistogram();
+        gImageInfoAreasEditor.drawImageInfo();
+    }
 }
 
 // checkboxShowOriginalOnChange
@@ -120,6 +140,7 @@ function radioDragOnClick(event) {
 // selectImagesOnChange
 function selectImagesOnChange(event) {
     gImageInfoAreasEditor.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
+    gImageInfoIntensityHistViewer.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
 }
 
 // buttonSaveFabricsOnClick
@@ -146,10 +167,19 @@ function buttonSaveFabricsOnClick(event) {
 
 // window - onload
 window.onload = (event) => {
-    // create globals
-    gImageInfoAreasEditor = new ImageInfoAreasEditor(image_canvas_panel);
+    // create ImageInfoAreasEditor
+    gImageInfoIntensityHistViewer = new ImageInfoIntensityHistViewer(histogram_canvas_panel);
 
-    // upply events
+    // create ImageInfoAreasEditor
+    gImageInfoAreasEditor = new ImageInfoAreasEditor(image_canvas_panel);
+    image_canvas_panel.addEventListener("mousemove", (event) => gImageInfoAreasEditor.onMouseMove(event));
+    image_canvas_panel.addEventListener("mousedown", (event) => gImageInfoAreasEditor.onMouseDown(event));
+    image_canvas_panel.addEventListener("mouseup", (event) => {
+        gImageInfoAreasEditor.onMouseUp(event);
+        gImageInfoIntensityHistViewer.drawHistogram();
+    });
+
+    // apply events
     buttonLoadImageFile.onclick = buttonLoadImageFileClick;
     radioInclude.onclick = radioIncludeOnClick;
     radioExclude.onclick = radioExcludeOnClick;
@@ -165,9 +195,6 @@ window.onload = (event) => {
     buttonScaleUp.onclick = buttonScaleUpClick;
 
     // image_canvas_panel
-    document.addEventListener("mousemove", (event) => gImageInfoAreasEditor.onMouseMove(event));
-    document.addEventListener("mousedown", (event) => gImageInfoAreasEditor.onMouseDown(event));
-    document.addEventListener("mouseup", (event) => gImageInfoAreasEditor.onMouseUp(event));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

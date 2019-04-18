@@ -58,8 +58,10 @@ export class ImageInfo {
 
     // addSelectionArea
     public addSelectionArea(area: AreaSelectionInfo): void {
-        // update image mask canvas
+        // get context
         let canvasMaskCtx = this.canvasMask.getContext("2d") as CanvasRenderingContext2D;
+
+        // fill mask
         canvasMaskCtx.fillStyle = (area.areaSelectionMode === AreaSelectionMode.INCLUDE) ? "#FF0000" : "#000000";
         canvasMaskCtx.fillRect(area.x, area.y, area.width, area.height);
         canvasMaskCtx.stroke();
@@ -74,7 +76,6 @@ export class ImageInfo {
         let canvasImageCtx = this.canvasImage.getContext("2d");
         let canvasMaskCtx = this.canvasMask.getContext("2d");
         let canvasHiLightCtx = this.canvasHiLight.getContext("2d");
-
         // get data arrays
         let canvasImageData = canvasImageCtx.getImageData(0, 0, this.canvasImage.width, this.canvasImage.height);
         let canvasMaskData = canvasMaskCtx.getImageData(0, 0, this.canvasMask.width, this.canvasMask.height);
@@ -114,7 +115,6 @@ export class ImageInfo {
         // get context
         let canvasMaskCtx = this.canvasMask.getContext("2d") as CanvasRenderingContext2D;
         let canvasBordersCtx = this.canvasBorders.getContext("2d") as CanvasRenderingContext2D;
-
         // get data arrays
         let canvasMaskData = canvasMaskCtx.getImageData(0, 0, this.canvasMask.width, this.canvasMask.height);
         let canvasBordersData = canvasBordersCtx.getImageData(0, 0, this.canvasBorders.width, this.canvasBorders.height);
@@ -143,34 +143,77 @@ export class ImageInfo {
     // updateIntensity
     public updateIntensity() {
         // get context
-        let canvasImageCtx = this.canvasImage.getContext("2d") as CanvasRenderingContext2D;
+        let canvasImageCtx = this.canvasImage.getContext("2d");
+        let canvasMaskCtx = this.canvasMask.getContext("2d");
         // get data arrays
         let canvasImageData = canvasImageCtx.getImageData(0, 0, this.canvasImage.width, this.canvasImage.height);
+        let canvasMaskData = canvasMaskCtx.getImageData(0, 0, this.canvasMask.width, this.canvasMask.height);
 
         // update image data
         this.intensity.fill(0);
         for (let i = 0; i < canvasImageData.data.length; i += 4) {
-            if (canvasImageData.data[i] > 0) {
+            if (canvasMaskData.data[i] > 0) {
                 this.intensity[canvasImageData.data[i]]++;
             }
         }
     }
 
+    // updateHilightCanvasAndIntensity
+    public updateHilightCanvasAndIntensity() {
+        // get context
+        let canvasImageCtx = this.canvasImage.getContext("2d");
+        let canvasMaskCtx = this.canvasMask.getContext("2d");
+        let canvasHiLightCtx = this.canvasHiLight.getContext("2d");
+        // get data arrays
+        let canvasImageData = canvasImageCtx.getImageData(0, 0, this.canvasImage.width, this.canvasImage.height);
+        let canvasMaskData = canvasMaskCtx.getImageData(0, 0, this.canvasMask.width, this.canvasMask.height);
+        let canvasHiLightData = canvasHiLightCtx.getImageData(0, 0, this.canvasHiLight.width, this.canvasHiLight.height);
+
+        // update hi-light image data
+        this.intensity.fill(0);
+        canvasHiLightData.data.fill(0);
+        for (let i = 0; i < canvasImageData.data.length; i += 4) {
+            if (canvasMaskData.data[i] > 0) {
+                // update hi-light
+                if (canvasImageData.data[i] >= this.intensityHigh) {
+                    canvasHiLightData.data[i + 0] = 0;
+                    canvasHiLightData.data[i + 1] = 255;
+                    canvasHiLightData.data[i + 2] = 0;
+                    canvasHiLightData.data[i + 3] = 255;
+                }
+                if (canvasImageData.data[i] <= this.intensityMedium) {
+                    canvasHiLightData.data[i + 0] = 0;
+                    canvasHiLightData.data[i + 1] = 0;
+                    canvasHiLightData.data[i + 2] = 255;
+                    canvasHiLightData.data[i + 3] = 255;
+                }
+                if (canvasImageData.data[i] <= this.intensityLow) {
+                    canvasHiLightData.data[i + 0] = 255;
+                    canvasHiLightData.data[i + 1] = 0;
+                    canvasHiLightData.data[i + 2] = 0;
+                    canvasHiLightData.data[i + 3] = 255;
+                }
+                // update intensity
+                this.intensity[canvasImageData.data[i]]++;
+            }
+        }
+
+        // store data to canvas
+        canvasHiLightCtx.putImageData(canvasHiLightData, 0, 0);
+    }
+
     // setIntensityLow
     public setIntensityLow(intensityLow: number) {
         this.intensityLow = intensityLow;
-        this.updateIntensity();
     }
 
     // setIntensityMedium
     public setIntensityMedium(intensityMedium: number) {
         this.intensityMedium = intensityMedium;
-        this.updateIntensity();
     }
 
     // setIntensityHigh
     public setIntensityHigh(intensityHigh: number) {
         this.intensityHigh = intensityHigh;
-        this.updateIntensity();
     }
 }

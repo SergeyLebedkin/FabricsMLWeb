@@ -57,11 +57,11 @@ export class ImageInfoAreasEditor {
             // selection region normalize and scale
             this.areaSelectionInfo.normalize();
             this.areaSelectionInfo.scale(1.0 / this.imageScale);
-            // add new region info
+            // add new area selection info
             let newAreaSelectionInfo = this.areaSelectionInfo.clone();
             newAreaSelectionInfo.trim(0, 0, this.imageInfo.canvasImage.width, this.imageInfo.canvasImage.height);
-            // add and update region
             this.imageInfo.addSelectionArea(newAreaSelectionInfo);
+            // update image info
             this.imageInfo.updateBordersCanvas();
             this.imageInfo.updateHilightCanvas();
             this.imageInfo.updateIntensity();
@@ -124,14 +124,6 @@ export class ImageInfoAreasEditor {
 
     // setImageInfo
     public setImageInfo(imageInfo: ImageInfo): void {
-        // check for null
-        if (imageInfo === null) {
-            this.imageInfo = null;
-            return;
-        }
-        // check for same image info
-        if (this.imageInfo === imageInfo)
-            return;
         // setup new image info
         if (this.imageInfo != imageInfo) {
             this.imageInfo = imageInfo;
