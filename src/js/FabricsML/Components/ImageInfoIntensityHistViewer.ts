@@ -1,5 +1,5 @@
 import { ImageInfo } from "../Types/ImageInfo"
-import * as Plotly from "../../deps/plotly.min.js"
+import * as Plotly from "plotly.js"
 
 // ImageInfoIntensityHistViewer
 export class ImageInfoIntensityHistViewer {
@@ -29,24 +29,25 @@ export class ImageInfoIntensityHistViewer {
     // drawHistogram
     public drawHistogram(): void {
         // draw base image
-        let y = this.imageInfo ? this.imageInfo.intensity : [].length = 256;
-        let mode = { displayModeBar: false };
-        let trace = { y: y, type: 'bar' };
-        let layout = {
+        const y = this.imageInfo ? this.imageInfo.intensity : new Uint32Array(256);
+        
+        const mode: Partial<Plotly.Config> = { displayModeBar: false };
+        const data: Partial<Plotly.PlotData>[] = [{ y: y, type: 'bar' }];
+        const layout: Partial<Plotly.Layout> = {
             shapes: !this.imageInfo ? [] : [{
-                // intensity low
+                // intensity low line
                 line: { color: 'rgb(255, 0, 0)',  width: 1 },
                 type: 'line', yref: 'paper', y0: 0, y1: 1,
                 x0: this.imageInfo.intensityLow,
                 x1: this.imageInfo.intensityLow
             }, {
-                // intensity medium
+                // intensity medium line
                 line: { color: 'rgb(0, 255, 0)',  width: 1 },
                 type: 'line', yref: 'paper', y0: 0, y1: 1,
                 x0: this.imageInfo.intensityMedium,
                 x1: this.imageInfo.intensityMedium
             }, {
-                // // intensity high
+                // intensity high line
                 line: { color: 'rgb(0, 0, 255)',  width: 1 },
                 type: 'line', yref: 'paper', y0: 0, y1: 1,
                 x0: this.imageInfo.intensityHigh,
@@ -57,6 +58,6 @@ export class ImageInfoIntensityHistViewer {
             margin: { l: 30, r: 30, b: 20, t: 15 },
             showlegend: false
         };
-        Plotly.newPlot(this.parent, [trace], layout, mode);
+        Plotly.newPlot(this.parent, data, layout, mode);
     }
 }
