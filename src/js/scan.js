@@ -112,31 +112,6 @@ function rangeIntensityHighOnChange(event) {
     }
 }
 
-// checkboxShowOriginalOnChange
-function checkboxShowOriginalOnChange(event) {
-    gImageInfoAreasEditor.setShowOriginalImage(checkboxShowOriginal.checked);
-}
-
-// radioIncludeOnClick
-function radioIncludeOnClick(event) {
-    gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.INCLUDE);
-}
-
-// radioExcludeOnClick
-function radioExcludeOnClick(event) {
-    gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.EXCLUDE);
-}
-
-// radioDrawOnClick
-function radioDrawOnClick(event) {
-    gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAW);
-}
-
-// radioDragOnClick
-function radioDragOnClick(event) {
-    gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAG);
-}
-
 // selectImagesOnChange
 function selectImagesOnChange(event) {
     gImageInfoAreasEditor.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
@@ -169,32 +144,30 @@ function buttonSaveFabricsOnClick(event) {
 window.onload = (event) => {
     // create ImageInfoAreasEditor
     gImageInfoIntensityHistViewer = new ImageInfoIntensityHistViewer(histogram_canvas_panel);
+    gImageInfoIntensityHistViewer.drawHistogram();
 
     // create ImageInfoAreasEditor
     gImageInfoAreasEditor = new ImageInfoAreasEditor(image_canvas_panel);
     image_canvas_panel.addEventListener("mousemove", (event) => gImageInfoAreasEditor.onMouseMove(event));
     image_canvas_panel.addEventListener("mousedown", (event) => gImageInfoAreasEditor.onMouseDown(event));
-    image_canvas_panel.addEventListener("mouseup", (event) => {
-        gImageInfoAreasEditor.onMouseUp(event);
-        gImageInfoIntensityHistViewer.drawHistogram();
-    });
+    image_canvas_panel.addEventListener("mouseup", (event) => gImageInfoAreasEditor.onMouseUp(event));
+    image_canvas_panel.addEventListener("mouseup", (event) => gImageInfoIntensityHistViewer.drawHistogram());
 
     // apply events
-    buttonLoadImageFile.onclick = buttonLoadImageFileClick;
-    radioInclude.onclick = radioIncludeOnClick;
-    radioExclude.onclick = radioExcludeOnClick;
-    radioDraw.onclick = radioDrawOnClick;
-    radioDrag.onclick = radioDragOnClick;
+    buttonLoadImageFile.addEventListener("click", buttonLoadImageFileClick);
+    radioInclude.addEventListener("click", event => gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.INCLUDE));
+    radioExclude.addEventListener("click", event => gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.EXCLUDE));
+    radioDraw.addEventListener("click", event => gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAW));
+    radioDrag.addEventListener("click", event => gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAG));
+    checkboxShowOriginal.addEventListener("click", event => gImageInfoAreasEditor.setShowOriginalImage(checkboxShowOriginal.checked));
+
     selectImages.onchange = selectImagesOnChange;
     rangeIntensityLow.oninput = rangeIntensityLowOnChange;
     rangeIntensityMedium.oninput = rangeIntensityMediumOnChange;
     rangeIntensityHigh.oninput = rangeIntensityHighOnChange;
-    checkboxShowOriginal.onchange = checkboxShowOriginalOnChange;
     buttonSaveFabrics.onclick = buttonSaveFabricsOnClick;
     buttonScaleDown.onclick = buttonScaleDownClick;
     buttonScaleUp.onclick = buttonScaleUpClick;
-
-    // image_canvas_panel
 }
 
 ///////////////////////////////////////////////////////////////////////////////
