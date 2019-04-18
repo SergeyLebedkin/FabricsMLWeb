@@ -40,6 +40,7 @@ html, body {
 
 #histogram_canvas_panel {
     text-align: center;
+    height: 450px;
 }
 
 #image_canvas_panel {

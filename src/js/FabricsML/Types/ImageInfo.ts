@@ -13,8 +13,8 @@ export class ImageInfo {
     // area selections
     public areaSelectionInfos: Array<AreaSelectionInfo> = [];
     // intensity
-    public intensity: Array<number> = Array<number>(256);
     public intensityLow: number = 90;
+    public intensity: Array<number> = Array<number>(256);
     public intensityMedium: number = 150;
     public intensityHigh: number = 250;
 

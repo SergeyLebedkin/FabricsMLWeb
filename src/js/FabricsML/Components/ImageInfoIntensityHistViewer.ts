@@ -1,4 +1,5 @@
 import { ImageInfo } from "../Types/ImageInfo"
+import * as Plotly from "../../deps/plotly.min.js"
 
 // ImageInfoIntensityHistViewer
 export class ImageInfoIntensityHistViewer {
@@ -6,9 +7,6 @@ export class ImageInfoIntensityHistViewer {
     private parent: HTMLDivElement = null;
     // image parameters
     private imageInfo: ImageInfo = null;
-    // main canvas
-    private canvasHist: HTMLCanvasElement = null;
-    private canvasHistCtx: CanvasRenderingContext2D = null;
 
     // constructor
     constructor(parent: HTMLDivElement) {
@@ -16,13 +14,7 @@ export class ImageInfoIntensityHistViewer {
         this.parent = parent;
         // image parameters
         this.imageInfo = null;
-        // create image canvas
-        this.canvasHist = document.createElement("canvas");
-        this.canvasHist.style.border = "1px solid green";
-        this.canvasHist.width = 255;
-        this.canvasHist.height = 500;
-        this.canvasHistCtx = this.canvasHist.getContext('2d');
-        this.parent.appendChild(this.canvasHist);
+        this.drawHistogram();
     }
 
     // setImageInfo
@@ -37,37 +29,34 @@ export class ImageInfoIntensityHistViewer {
     // drawHistogram
     public drawHistogram(): void {
         // draw base image
-        if (this.imageInfo !== null) {
-            this.canvasHist.width = 255;
-            this.canvasHist.height = 500;
-            this.canvasHistCtx.fillStyle = "white";
-            this.canvasHistCtx.fillRect(0, 0, this.canvasHist.width, this.canvasHist.height);
-            // draw histogram
-            this.canvasHistCtx.strokeStyle = "blue";
-            for (var i = 0; i < this.imageInfo.intensity.length; i++) {
-                var x = i;
-                var y = Math.log10(this.imageInfo.intensity[i]) * 50;
-                this.canvasHistCtx.beginPath();
-                this.canvasHistCtx.moveTo(x, this.canvasHist.height);
-                this.canvasHistCtx.lineTo(x, this.canvasHist.height - y);
-                this.canvasHistCtx.stroke();
-            }
-            // draw lines
-            this.canvasHistCtx.beginPath();
-            this.canvasHistCtx.moveTo(this.imageInfo.intensityLow, 0);
-            this.canvasHistCtx.lineTo(this.imageInfo.intensityLow, this.canvasHist.height);
-            this.canvasHistCtx.strokeStyle = "red";
-            this.canvasHistCtx.stroke();
-            this.canvasHistCtx.beginPath();
-            this.canvasHistCtx.moveTo(this.imageInfo.intensityMedium, 0);
-            this.canvasHistCtx.lineTo(this.imageInfo.intensityMedium, this.canvasHist.height);
-            this.canvasHistCtx.strokeStyle = "cyan";
-            this.canvasHistCtx.stroke();
-            this.canvasHistCtx.beginPath();
-            this.canvasHistCtx.moveTo(this.imageInfo.intensityHigh, 0);
-            this.canvasHistCtx.lineTo(this.imageInfo.intensityHigh, this.canvasHist.height);
-            this.canvasHistCtx.strokeStyle = "green";
-            this.canvasHistCtx.stroke();
-        }
+        let y = this.imageInfo ? this.imageInfo.intensity : [].length = 256;
+        let mode = { displayModeBar: false };
+        let trace = { y: y, type: 'bar' };
+        let layout = {
+            shapes: !this.imageInfo ? [] : [{
+                // intensity low
+                line: { color: 'rgb(255, 0, 0)',  width: 1 },
+                type: 'line', yref: 'paper', y0: 0, y1: 1,
+                x0: this.imageInfo.intensityLow,
+                x1: this.imageInfo.intensityLow
+            }, {
+                // intensity medium
+                line: { color: 'rgb(0, 255, 0)',  width: 1 },
+                type: 'line', yref: 'paper', y0: 0, y1: 1,
+                x0: this.imageInfo.intensityMedium,
+                x1: this.imageInfo.intensityMedium
+            }, {
+                // // intensity high
+                line: { color: 'rgb(0, 0, 255)',  width: 1 },
+                type: 'line', yref: 'paper', y0: 0, y1: 1,
+                x0: this.imageInfo.intensityHigh,
+                x1: this.imageInfo.intensityHigh
+            }],
+            xaxis: { range: [0, 255] },
+            yaxis: { type: 'log', autorange: true },
+            margin: { l: 30, r: 30, b: 20, t: 15 },
+            showlegend: false
+        };
+        Plotly.newPlot(this.parent, [trace], layout, mode);
     }
 }
