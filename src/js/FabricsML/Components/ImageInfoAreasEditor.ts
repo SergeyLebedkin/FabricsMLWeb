@@ -58,10 +58,10 @@ export class ImageInfoAreasEditor {
             this.areaSelectionInfo.normalize();
             this.areaSelectionInfo.scale(1.0 / this.imageScale);
             // add new region info
-            let areaSelectionInfo = this.areaSelectionInfo.clone();
-            areaSelectionInfo.trim(0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            let newAreaSelectionInfo = this.areaSelectionInfo.clone();
+            newAreaSelectionInfo.trim(0, 0, this.imageInfo.canvasImage.width, this.imageInfo.canvasImage.height);
             // add and update region
-            this.imageInfo.addSelectionArea(areaSelectionInfo);
+            this.imageInfo.addSelectionArea(newAreaSelectionInfo);
             this.imageInfo.updateBordersCanvas();
             this.imageInfo.updateHilightCanvas();
             this.imageInfo.updateIntensity();
@@ -183,8 +183,8 @@ export class ImageInfoAreasEditor {
             this.imageCanvas.height = this.imageInfo.canvasImage.height * this.imageScale;
             // draw original image
             this.imageCanvasCtx.globalAlpha = 1.0;
-            //this.imageCanvasCtx.drawImage(this.imageInfo.canvasImage, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
-            this.imageCanvasCtx.drawImage(this.imageInfo.canvasMask, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            this.imageCanvasCtx.drawImage(this.imageInfo.canvasImage, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            //this.imageCanvasCtx.drawImage(this.imageInfo.canvasMask, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
             if (!this.showOriginalImage) {
                 // draw hi-lited canvas
                 this.imageCanvasCtx.globalAlpha = 0.9;
