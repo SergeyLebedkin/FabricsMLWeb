@@ -1,4 +1,5 @@
 const path = require('path');
+const BomPlugin = require('webpack-utf8-bom');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -34,6 +35,7 @@ module.exports = {
             { from: "src/css", to: "css" },
             //{ from: "src/js/deps", to: "js/deps" }
         ]),
+        new BomPlugin(true),
         new HtmlWebpackPlugin({
             inject: false,
             template: './src/index.html',
