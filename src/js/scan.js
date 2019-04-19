@@ -33,8 +33,10 @@ function buttonLoadImageFileClick(event) {
                 if (!gImageInfoAreasEditor.imageInfo)
                     gImageInfoAreasEditor.setImageInfo(event.currentTarget.imageInfo);
 
-                if (!gImageInfoIntensityHistViewer.imageInfo)
+                if (!gImageInfoIntensityHistViewer.imageInfo) {
                     gImageInfoIntensityHistViewer.setImageInfo(event.currentTarget.imageInfo);
+                    updateIntensityInputs();
+                }
             }
             fileReader.readAsArrayBuffer(imageInfo.fileRef);
 
@@ -68,6 +70,7 @@ function selectImagesUpdate() {
     if ((selectedIndex < 0) && (gImageInfoList.length > 0))
         selectedIndex = 0;
     selectImages.selectedIndex = selectedIndex;
+    updateIntensityInputs();
 }
 
 // scale down bnt click
@@ -85,6 +88,7 @@ function buttonScaleUpClick(event) {
 // rangeIntensityLowOnChange
 function rangeIntensityLowOnChange(event) {
     if (gImageInfoIntensityHistViewer.imageInfo) {
+        textIntensityLow.value = rangeIntensityLow.value;
         gImageInfoIntensityHistViewer.imageInfo.setIntensityLow(rangeIntensityLow.value);
         gImageInfoIntensityHistViewer.imageInfo.updateHilightCanvasAndIntensity();
         gImageInfoIntensityHistViewer.drawHistogram();
@@ -95,6 +99,7 @@ function rangeIntensityLowOnChange(event) {
 // rangeIntensityMediumOnChange
 function rangeIntensityMediumOnChange(event) {
     if (gImageInfoIntensityHistViewer.imageInfo) {
+        textIntensityMedium.value = rangeIntensityMedium.value;
         gImageInfoIntensityHistViewer.imageInfo.setIntensityMedium(rangeIntensityMedium.value);
         gImageInfoIntensityHistViewer.imageInfo.updateHilightCanvasAndIntensity();
         gImageInfoIntensityHistViewer.drawHistogram();
@@ -105,6 +110,7 @@ function rangeIntensityMediumOnChange(event) {
 // rangeIntensityHighOnChange
 function rangeIntensityHighOnChange(event) {
     if (gImageInfoIntensityHistViewer.imageInfo) {
+        textIntensityHigh.value = rangeIntensityHigh.value;
         gImageInfoIntensityHistViewer.imageInfo.setIntensityHigh(rangeIntensityHigh.value);
         gImageInfoIntensityHistViewer.imageInfo.updateHilightCanvasAndIntensity();
         gImageInfoIntensityHistViewer.drawHistogram();
@@ -116,6 +122,7 @@ function rangeIntensityHighOnChange(event) {
 function selectImagesOnChange(event) {
     gImageInfoAreasEditor.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
     gImageInfoIntensityHistViewer.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
+    updateIntensityInputs();
 }
 
 // buttonSaveFabricsOnClick
@@ -138,6 +145,18 @@ function buttonSaveFabricsOnClick(event) {
     regionsString += '</HighResolutionImageData>';
 
     downloadFile(regionsString, filename + ".xml", 'text/plain');
+}
+
+// updateIntensityInputs
+function updateIntensityInputs() {
+    if (gImageInfoIntensityHistViewer.imageInfo) {
+        rangeIntensityLow.value = gImageInfoIntensityHistViewer.imageInfo.intensityLow;
+        rangeIntensityMedium.value = gImageInfoIntensityHistViewer.imageInfo.intensityMedium;
+        rangeIntensityHigh.value = gImageInfoIntensityHistViewer.imageInfo.intensityHigh;
+        textIntensityLow.value = rangeIntensityLow.value;
+        textIntensityMedium.value = rangeIntensityMedium.value;
+        textIntensityHigh.value = rangeIntensityHigh.value;
+    }
 }
 
 // window - onload
@@ -168,6 +187,8 @@ window.onload = (event) => {
     buttonSaveFabrics.onclick = buttonSaveFabricsOnClick;
     buttonScaleDown.onclick = buttonScaleDownClick;
     buttonScaleUp.onclick = buttonScaleUpClick;
+
+    updateIntensityInputs();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

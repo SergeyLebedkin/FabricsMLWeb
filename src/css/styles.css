@@ -35,7 +35,9 @@ html, body {
 
 .row-panel {
     display: flex; 
-    flex-direction: row
+    flex-direction: row;
+    padding: 0;
+    border: 1px solid lightgray
 }
 
 #histogram_canvas_panel {

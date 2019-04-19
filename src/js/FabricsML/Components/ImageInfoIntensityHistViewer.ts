@@ -28,11 +28,11 @@ export class ImageInfoIntensityHistViewer {
 
     // drawHistogram
     public drawHistogram(): void {
-        // draw base image
-        const y = this.imageInfo ? this.imageInfo.intensity : new Uint32Array(256);
-        
+        // get data for bar
+        const yData = this.imageInfo ? this.imageInfo.intensity : new Uint32Array(256);
+        // plot histogram bar
         const mode: Partial<Plotly.Config> = { displayModeBar: false };
-        const data: Partial<Plotly.PlotData>[] = [{ y: y, type: 'bar' }];
+        const data: Partial<Plotly.PlotData>[] = [{ y: yData, type: 'bar' }];
         const layout: Partial<Plotly.Layout> = {
             shapes: !this.imageInfo ? [] : [{
                 // intensity low line
