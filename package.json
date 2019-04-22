@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack --mode development --progress",
     "build": "webpack --mode production --progress",
-    "run": "webpack-dev-server --mode development --open --progress"
+    "start": "webpack-dev-server --mode development --open --progress"
   },
   "keywords": [],
   "author": "",

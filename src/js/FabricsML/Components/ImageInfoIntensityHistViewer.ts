@@ -54,7 +54,7 @@ export class ImageInfoIntensityHistViewer {
                 x1: this.imageInfo.intensityHigh
             }],
             xaxis: { range: [0, 255] },
-            yaxis: { type: 'log', autorange: true },
+            yaxis: { type: 'log', autorange: true, showticklabels: false },
             margin: { l: 30, r: 30, b: 20, t: 15 },
             showlegend: false
         };

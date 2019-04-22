@@ -142,6 +142,16 @@ export class ImageInfoAreasEditor {
     // setMouseSelectionMode
     public setMouseSelectionMode(mouseSelectionMode: MouseSelectionMode): void {
         this.mouseSelectionMode = mouseSelectionMode;
+        switch (this.mouseSelectionMode) {
+            case MouseSelectionMode.DRAW: {
+                this.imageCanvas.style.cursor = "default";
+                break;
+            }
+            case MouseSelectionMode.DRAG: {
+                this.imageCanvas.style.cursor = "move";
+                break;
+            }
+        }
     }
 
     // setAreaSelectionMode
