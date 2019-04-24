@@ -1,5 +1,6 @@
-import { AreaSelectionInfo } from "./AreaSelectionInfo"
-import { AreaSelectionMode } from "./AreaSelectionMode"
+import { SelectionInfo } from "./SelectionInfo"
+import { SelectionInfoType } from "./SelectionInfoType"
+import { SelectionInfoMode } from "./SelectionInfoMode"
 
 // ImageInfo
 export class ImageInfo {
@@ -11,7 +12,7 @@ export class ImageInfo {
     public canvasHiLight: HTMLCanvasElement = null;
     public canvasBorders: HTMLCanvasElement = null;
     // area selections
-    public areaSelectionInfos: Array<AreaSelectionInfo> = [];
+    public selectionInfos: Array<SelectionInfo> = [];
     // intensity
     public intensity: Uint32Array = new Uint32Array(256);
     public intensityLow: number = 90;
@@ -28,7 +29,7 @@ export class ImageInfo {
         this.canvasHiLight = document.createElement("canvas");
         this.canvasBorders = document.createElement("canvas");
         // area selections
-        this.areaSelectionInfos = [];
+        this.selectionInfos = [];
         // intensity
         this.intensity.fill(0);
         this.intensityLow = 90;
@@ -57,17 +58,17 @@ export class ImageInfo {
     }
 
     // addSelectionArea
-    public addSelectionArea(area: AreaSelectionInfo): void {
+    public addSelectionArea(selectionInfo: SelectionInfo): void {
         // get context
         let canvasMaskCtx = this.canvasMask.getContext("2d") as CanvasRenderingContext2D;
 
         // fill mask
-        canvasMaskCtx.fillStyle = (area.areaSelectionMode === AreaSelectionMode.INCLUDE) ? "#FF0000" : "#000000";
-        canvasMaskCtx.fillRect(area.x, area.y, area.width, area.height);
+        canvasMaskCtx.fillStyle = (selectionInfo.selectionInfoMode === SelectionInfoMode.INCLUDE) ? "#FF0000" : "#000000";
+        canvasMaskCtx.fillRect(selectionInfo.x, selectionInfo.y, selectionInfo.width, selectionInfo.height);
         canvasMaskCtx.stroke();
 
         // add area
-        this.areaSelectionInfos.push(area);
+        this.selectionInfos.push(selectionInfo);
     }
 
     // updateHilightCanvas

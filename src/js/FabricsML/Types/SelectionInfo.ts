@@ -1,37 +1,39 @@
-import { AreaSelectionMode } from "./AreaSelectionMode"
+import { SelectionInfoMode } from "./SelectionInfoMode"
 
-// AreaSelectionInfo
-export class AreaSelectionInfo {
+export class SelectionInfoBase {};
+
+// SelectionInfo
+export class SelectionInfo extends SelectionInfoBase{
     // rectangle
     public x: number = 0.0;
     public y: number = 0.0;
     public width: number = 0.0;
     public height: number = 0.0;
     // AreaSelectionMode
-    public areaSelectionMode: AreaSelectionMode = AreaSelectionMode.INCLUDE;
+    public selectionInfoMode: SelectionInfoMode = SelectionInfoMode.INCLUDE;
 
     // constructor
     constructor(x: number, y: number, width: number, height: number) {
+        super();
         // rectangle
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        // AreaSelectionMode
-        this.areaSelectionMode = AreaSelectionMode.INCLUDE
+        // SelectionInfoMode
+        this.selectionInfoMode = SelectionInfoMode.INCLUDE
     }
 
     // constructor
-    clone(): AreaSelectionInfo {
+    clone(): SelectionInfo {
         // create new area selection info
-        let areaSelectionInfo = new AreaSelectionInfo(
+        let selectionInfo: SelectionInfo = new SelectionInfo(
             this.x, this.y, this.width, this.height);
         // copy area selection mode
-        areaSelectionInfo.areaSelectionMode = this.areaSelectionMode;
+        selectionInfo.selectionInfoMode = this.selectionInfoMode;
         // return new element
-        return areaSelectionInfo;
+        return selectionInfo;
     }
-
 
     // normalize region
     public normalize(): void {

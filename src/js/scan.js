@@ -1,6 +1,7 @@
 import Tiff from "tiff.js";
 import { ImageInfo } from "./FabricsML/Types/ImageInfo";
-import { AreaSelectionMode } from "./FabricsML/Types/AreaSelectionMode";
+import { SelectionInfoType } from "./FabricsML/Types/SelectionInfoType";
+import { SelectionInfoMode } from "./FabricsML/Types/SelectionInfoMode";
 import { MouseSelectionMode } from "./FabricsML/Types/MouseSelectionMode";
 import { ImageInfoAreasEditor } from "./FabricsML/Components/ImageInfoAreasEditor";
 import { ImageInfoIntensityHistViewer } from "./FabricsML/Components/ImageInfoIntensityHistViewer";
@@ -25,8 +26,17 @@ function buttonLoadImageFileClick(event) {
             let fileReader = new FileReader();
             fileReader.imageInfo = imageInfo;
             fileReader.onload = (event) => {
+
+                // Tiff tag for smart SEM
+                const TIFFTAG_SEM = 34118;
+                // Tiff tag for Fibics
+                const TIFFTAG_Fibics = 51023;
+
                 // load tiff from file
                 let tiff = new Tiff({ buffer: event.currentTarget.result });
+                let data = 1024;
+                let sam = tiff.getField(TIFFTAG_SEM);
+                let fibics = tiff.getField(TIFFTAG_Fibics);
                 event.currentTarget.imageInfo.copyFromCanvas(tiff.toCanvas());
 
                 // image mask canvas
@@ -174,10 +184,16 @@ window.onload = (event) => {
 
     // apply events
     buttonLoadImageFile.addEventListener("click", buttonLoadImageFileClick);
-    radioInclude.addEventListener("click", event => gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.INCLUDE));
-    radioExclude.addEventListener("click", event => gImageInfoAreasEditor.setAreaSelectionMode(AreaSelectionMode.EXCLUDE));
+
+    // radios
     radioDraw.addEventListener("click", event => gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAW));
     radioDrag.addEventListener("click", event => gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAG));
+    radioRect.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoType(SelectionInfoType.RECT));
+    radioArea.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoType(SelectionInfoType.AREA));
+    radioInclude.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoMode(SelectionInfoMode.INCLUDE));
+    radioExclude.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoMode(SelectionInfoMode.EXCLUDE));
+    
+    // checkboxes
     checkboxShowOriginal.addEventListener("click", event => gImageInfoAreasEditor.setShowOriginalImage(checkboxShowOriginal.checked));
 
     selectImages.onchange = selectImagesOnChange;
