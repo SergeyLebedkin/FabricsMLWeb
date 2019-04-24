@@ -1,8 +1,8 @@
 import Tiff from "tiff.js";
 import { ImageInfo } from "./FabricsML/Types/ImageInfo";
+import { MouseUsageMode } from "./FabricsML/Types/MouseUsageMode";
 import { SelectionInfoType } from "./FabricsML/Types/SelectionInfoType";
 import { SelectionInfoMode } from "./FabricsML/Types/SelectionInfoMode";
-import { MouseSelectionMode } from "./FabricsML/Types/MouseSelectionMode";
 import { ImageInfoAreasEditor } from "./FabricsML/Components/ImageInfoAreasEditor";
 import { ImageInfoIntensityHistViewer } from "./FabricsML/Components/ImageInfoIntensityHistViewer";
 
@@ -186,8 +186,8 @@ window.onload = (event) => {
     buttonLoadImageFile.addEventListener("click", buttonLoadImageFileClick);
 
     // radios
-    radioDraw.addEventListener("click", event => gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAW));
-    radioDrag.addEventListener("click", event => gImageInfoAreasEditor.setMouseSelectionMode(MouseSelectionMode.DRAG));
+    radioDraw.addEventListener("click", event => gImageInfoAreasEditor.setMouseUsageMode(MouseUsageMode.DRAW));
+    radioDrag.addEventListener("click", event => gImageInfoAreasEditor.setMouseUsageMode(MouseUsageMode.DRAG));
     radioRect.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoType(SelectionInfoType.RECT));
     radioArea.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoType(SelectionInfoType.AREA));
     radioInclude.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoMode(SelectionInfoMode.INCLUDE));

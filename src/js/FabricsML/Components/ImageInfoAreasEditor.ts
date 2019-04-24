@@ -1,8 +1,8 @@
 import { ImageInfo } from "../Types/ImageInfo"
+import { MouseUsageMode } from "../Types/MouseUsageMode"
 import { SelectionInfoMode } from "../Types/SelectionInfoMode"
 import { SelectionInfoType } from "../Types/SelectionInfoType"
-import { MouseSelectionMode } from "../Types/MouseSelectionMode"
-import { SelectionInfo } from "../Types/SelectionInfo";
+import { SelectionInfo, SelectionInfoRect } from "../Types/SelectionInfo";
 
 // ImageInfoRegionsEditor
 export class ImageInfoAreasEditor {
@@ -17,12 +17,12 @@ export class ImageInfoAreasEditor {
     // mouse parameters
     private mousePrevDragX: number = 0;
     private mousePrevDragY: number = 0;
-    private mouseSelectionMode: MouseSelectionMode = MouseSelectionMode.DRAW;
+    private mouseUsageMode: MouseUsageMode = MouseUsageMode.DRAW;
     // selection parameters
-    private areaSelectionStarted: boolean = false;
-    private selectionInfoType: SelectionInfoType = SelectionInfoType.AREA;
+    private selectionStarted: boolean = false;
+    private selectionInfoType: SelectionInfoType = SelectionInfoType.RECT;
     private selectionInfoMode: SelectionInfoMode = SelectionInfoMode.INCLUDE;
-    private selectionInfo: SelectionInfo = null;
+    private selectionInfoRect: SelectionInfoRect = null;
 
     // main canvas
     private imageCanvas: HTMLCanvasElement = null;
@@ -39,12 +39,12 @@ export class ImageInfoAreasEditor {
         // selection parameters
         this.mousePrevDragX = 0;
         this.mousePrevDragY = 0;
-        this.mouseSelectionMode = MouseSelectionMode.DRAW;
-        // selection area info
-        this.areaSelectionStarted = false;
+        this.mouseUsageMode = MouseUsageMode.DRAW;
+        // selection info
+        this.selectionStarted = false;
         this.selectionInfoType = SelectionInfoType.AREA;
         this.selectionInfoMode = SelectionInfoMode.INCLUDE;
-        this.selectionInfo = new SelectionInfo(0, 0, 0, 0);
+        this.selectionInfoRect = new SelectionInfoRect(0, 0, 0, 0);
         // create image canvas
         this.imageCanvas = document.createElement("canvas");
         this.imageCanvas.style.border = "1px solid orange";
@@ -55,14 +55,14 @@ export class ImageInfoAreasEditor {
     // onMouseUp
     public onMouseUp(event: MouseEvent): void {
         // proceed selection
-        if (this.areaSelectionStarted && (this.mouseSelectionMode === MouseSelectionMode.DRAW)) {
+        if (this.selectionStarted && (this.mouseUsageMode === MouseUsageMode.DRAW)) {
             // selection region normalize and scale
-            this.selectionInfo.normalize();
-            this.selectionInfo.scale(1.0 / this.imageScale);
-            // add new area selection info
-            let newSelectionInfo = this.selectionInfo.clone();
+            this.selectionInfoRect.normalize();
+            this.selectionInfoRect.scale(1.0 / this.imageScale);
+            // add new selection info
+            let newSelectionInfo = this.selectionInfoRect.clone();
             newSelectionInfo.trim(0, 0, this.imageInfo.canvasImage.width, this.imageInfo.canvasImage.height);
-            this.imageInfo.addSelectionArea(newSelectionInfo);
+            this.imageInfo.addSelectionInfo(newSelectionInfo);
             // update image info
             this.imageInfo.updateBordersCanvas();
             this.imageInfo.updateHilightCanvas();
@@ -70,8 +70,8 @@ export class ImageInfoAreasEditor {
             // draw image info
             this.drawImageInfo();
         }
-        // area selection finished
-        this.areaSelectionStarted = false;
+        // selection finished
+        this.selectionStarted = false;
     }
 
     // onMouseDown
@@ -81,37 +81,37 @@ export class ImageInfoAreasEditor {
             let rect = this.imageCanvas.getBoundingClientRect();
             let mousePosX = event.clientX - rect.left;
             let mousePosY = event.clientY - rect.top;
-            // set area selection info
-            this.selectionInfo.x = mousePosX;
-            this.selectionInfo.y = mousePosY;
-            this.selectionInfo.width = 0;
-            this.selectionInfo.height = 0;
-            this.selectionInfo.selectionInfoMode = this.selectionInfoMode;
+            // set selection info
+            this.selectionInfoRect.x = mousePosX;
+            this.selectionInfoRect.y = mousePosY;
+            this.selectionInfoRect.width = 0;
+            this.selectionInfoRect.height = 0;
+            this.selectionInfoRect.selectionInfoMode = this.selectionInfoMode;
             // set mouse base coords
             this.mousePrevDragX = event.screenX;
             this.mousePrevDragY = event.screenY;
-            // set area selection started
-            this.areaSelectionStarted = true;
+            // set selection started
+            this.selectionStarted = true;
         }
     }
 
     // onMouseMove
     public onMouseMove(event: MouseEvent): void {
         // draw mode
-        if (this.areaSelectionStarted && (this.mouseSelectionMode === MouseSelectionMode.DRAW)) {
+        if (this.selectionStarted && (this.mouseUsageMode === MouseUsageMode.DRAW)) {
             // get bounding client rect
             let rect = this.imageCanvas.getBoundingClientRect();
             let mousePosX = event.clientX - rect.left;
             let mousePosY = event.clientY - rect.top;
-            // update area selection info
-            this.selectionInfo.width = mousePosX - this.selectionInfo.x;
-            this.selectionInfo.height = mousePosY - this.selectionInfo.y;
+            // update selection info
+            this.selectionInfoRect.width = mousePosX - this.selectionInfoRect.x;
+            this.selectionInfoRect.height = mousePosY - this.selectionInfoRect.y;
             // redraw stuff
             this.drawImageInfo();
-            this.drawSelectionArea();
+            this.drawSelectionInfoRect();
         };
         // drag image
-        if (this.areaSelectionStarted && (this.mouseSelectionMode === MouseSelectionMode.DRAG)) {
+        if (this.selectionStarted && (this.mouseUsageMode === MouseUsageMode.DRAG)) {
             // get mouse delta move
             let mouseDeltaX = this.mousePrevDragX - event.screenX;
             let mouseDeltaY = this.mousePrevDragY - event.screenY;
@@ -141,15 +141,15 @@ export class ImageInfoAreasEditor {
         }
     }
 
-    // setMouseSelectionMode
-    public setMouseSelectionMode(mouseSelectionMode: MouseSelectionMode): void {
-        this.mouseSelectionMode = mouseSelectionMode;
-        switch (this.mouseSelectionMode) {
-            case MouseSelectionMode.DRAW: {
+    // setMouseUsageMode
+    public setMouseUsageMode(mouseUsageMode: MouseUsageMode): void {
+        this.mouseUsageMode = mouseUsageMode;
+        switch (this.mouseUsageMode) {
+            case MouseUsageMode.DRAW: {
                 this.imageCanvas.style.cursor = "default";
                 break;
             }
-            case MouseSelectionMode.DRAG: {
+            case MouseUsageMode.DRAG: {
                 this.imageCanvas.style.cursor = "move";
                 break;
             }
@@ -159,7 +159,7 @@ export class ImageInfoAreasEditor {
     // setSelectionInfoType
     public setSelectionInfoType(selectionInfoType: SelectionInfoType): void {
         this.selectionInfoType = selectionInfoType;
-        this.areaSelectionStarted = false;
+        this.selectionStarted = false;
     }
 
     // setSelectionInfoMode
@@ -173,13 +173,13 @@ export class ImageInfoAreasEditor {
         this.drawImageInfo();
     }
 
-    // drawSelectionArea
-    public drawSelectionArea(): void {
-        if (this.areaSelectionStarted) {
+    // drawSelectionInfoRect
+    public drawSelectionInfoRect(): void {
+        if (this.selectionStarted) {
             // check selection mode and set alpha
             this.imageCanvasCtx.globalAlpha = 0.8;
             this.imageCanvasCtx.fillStyle = "blue";
-            this.imageCanvasCtx.fillRect(this.selectionInfo.x, this.selectionInfo.y, this.selectionInfo.width, this.selectionInfo.height);
+            this.imageCanvasCtx.fillRect(this.selectionInfoRect.x, this.selectionInfoRect.y, this.selectionInfoRect.width, this.selectionInfoRect.height);
             this.imageCanvasCtx.globalAlpha = 1.0;
         }
     }

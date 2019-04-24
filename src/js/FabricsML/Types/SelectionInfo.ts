@@ -1,16 +1,35 @@
+import { SelectionInfoType } from "./SelectionInfoType"
 import { SelectionInfoMode } from "./SelectionInfoMode"
+import { Coord2d } from "./Coord2d";
 
-export class SelectionInfoBase {};
+export class SelectionInfo {
+    // SelectionInfoMode
+    public selectionInfoMode: SelectionInfoMode = SelectionInfoMode.INCLUDE;
 
-// SelectionInfo
-export class SelectionInfo extends SelectionInfoBase{
+    // constructor
+    constructor() {
+        // SelectionInfoMode
+        this.selectionInfoMode = SelectionInfoMode.INCLUDE
+    }
+
+    // getType (I don`t like this solution. This function must return something like "Unknown". But, let it be as is)
+    public getType(): SelectionInfoType {
+        return SelectionInfoType.RECT;
+    }
+
+    // drawToContext
+    public drawToContext(context: CanvasRenderingContext2D) {
+        // nothing (MUST be empty)
+    }
+};
+
+// SelectionInfoRect
+export class SelectionInfoRect extends SelectionInfo {
     // rectangle
     public x: number = 0.0;
     public y: number = 0.0;
     public width: number = 0.0;
     public height: number = 0.0;
-    // AreaSelectionMode
-    public selectionInfoMode: SelectionInfoMode = SelectionInfoMode.INCLUDE;
 
     // constructor
     constructor(x: number, y: number, width: number, height: number) {
@@ -20,14 +39,12 @@ export class SelectionInfo extends SelectionInfoBase{
         this.y = y;
         this.width = width;
         this.height = height;
-        // SelectionInfoMode
-        this.selectionInfoMode = SelectionInfoMode.INCLUDE
     }
 
     // constructor
-    clone(): SelectionInfo {
-        // create new area selection info
-        let selectionInfo: SelectionInfo = new SelectionInfo(
+    public clone(): SelectionInfoRect {
+        // create new selection info
+        let selectionInfo: SelectionInfoRect = new SelectionInfoRect(
             this.x, this.y, this.width, this.height);
         // copy area selection mode
         selectionInfo.selectionInfoMode = this.selectionInfoMode;
@@ -71,5 +88,74 @@ export class SelectionInfo extends SelectionInfoBase{
         this.y = result_y0;
         this.width = result_x1 - result_x0;
         this.height = result_y1 - result_y0;
+    }
+
+    // getType
+    public getType(): SelectionInfoType {
+        return SelectionInfoType.RECT;
+    }
+
+    // drawToContext
+    public drawToContext(context: CanvasRenderingContext2D) {
+        // fill mask
+        context.fillStyle = (this.selectionInfoMode === SelectionInfoMode.INCLUDE) ? "#FF0000" : "#000000";
+        context.fillRect(this.x, this.y, this.width, this.height);
+        context.stroke();
+    }
+}
+
+// SelectionInfoArea
+export class SelectionInfoArea extends SelectionInfo {
+    // points
+    private points: Array<Coord2d> = new Array<Coord2d>();
+
+    // constructor
+    constructor() {
+        super();
+        // rectangle
+        this.points = [];
+    }
+
+    // addPoint
+    public addPoint(x: number, y: number) {
+        this.points.push(new Coord2d(x, y));
+    }
+
+    // constructor
+    public clone(): SelectionInfoArea {
+        // create new selection info
+        let selectionInfo: SelectionInfoArea = new SelectionInfoArea();
+        // copy points (this is a noce method, but I need to test it)
+        selectionInfo.points = [...this.points];
+        // return new element
+        return selectionInfo;
+    }
+
+    // scale region parameters
+    public scale(factor: number): void {
+        // sipmly scale
+        this.points.forEach(coord => {
+            coord.x *= factor;
+            coord.y *= factor;
+        });
+    }
+
+    // getType
+    public getType(): SelectionInfoType {
+        return SelectionInfoType.RECT;
+    }
+
+    // drawToContext
+    public drawToContext(context: CanvasRenderingContext2D) {
+        // to draw area, there shpuld be a 3 points at least
+        if (this.points.length > 2) {
+            context.fillStyle = '#AA0000';
+            context.beginPath();
+            context.moveTo(this.points[0].x, this.points[0].y);
+            for (let i = 1; i < this.points.length; i++)
+                context.lineTo(this.points[i].x, this.points[i].y);
+            context.closePath();
+            context.fill();
+        }
     }
 }

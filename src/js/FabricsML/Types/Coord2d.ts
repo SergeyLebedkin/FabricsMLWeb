@@ -9,4 +9,9 @@ export class Coord2d {
         this.x = x;
         this.y = y;
     }
+
+    // clone
+    public clone(): Coord2d {
+        return new Coord2d(this.x, this.y);
+    }
 }

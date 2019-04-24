@@ -11,7 +11,7 @@ export class ImageInfo {
     public canvasMask: HTMLCanvasElement = null;
     public canvasHiLight: HTMLCanvasElement = null;
     public canvasBorders: HTMLCanvasElement = null;
-    // area selections
+    // selection infos
     public selectionInfos: Array<SelectionInfo> = [];
     // intensity
     public intensity: Uint32Array = new Uint32Array(256);
@@ -28,7 +28,7 @@ export class ImageInfo {
         this.canvasMask = document.createElement("canvas");
         this.canvasHiLight = document.createElement("canvas");
         this.canvasBorders = document.createElement("canvas");
-        // area selections
+        // selections
         this.selectionInfos = [];
         // intensity
         this.intensity.fill(0);
@@ -57,17 +57,12 @@ export class ImageInfo {
         this.updateIntensity();
     }
 
-    // addSelectionArea
-    public addSelectionArea(selectionInfo: SelectionInfo): void {
+    // addSelectionInfo
+    public addSelectionInfo(selectionInfo: SelectionInfo): void {
         // get context
         let canvasMaskCtx = this.canvasMask.getContext("2d") as CanvasRenderingContext2D;
-
-        // fill mask
-        canvasMaskCtx.fillStyle = (selectionInfo.selectionInfoMode === SelectionInfoMode.INCLUDE) ? "#FF0000" : "#000000";
-        canvasMaskCtx.fillRect(selectionInfo.x, selectionInfo.y, selectionInfo.width, selectionInfo.height);
-        canvasMaskCtx.stroke();
-
-        // add area
+        selectionInfo.drawToContext(canvasMaskCtx);
+        // add selection info
         this.selectionInfos.push(selectionInfo);
     }
 
