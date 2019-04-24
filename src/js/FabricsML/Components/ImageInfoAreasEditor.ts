@@ -102,9 +102,19 @@ export class ImageInfoAreasEditor {
             if ((this.mouseUsageMode === MouseUsageMode.DRAW) && (this.selectionInfoType === SelectionInfoType.AREA)) {
                 // set selection info
                 this.selectionInfoArea.addPoint(mousePosX, mousePosY);
-                this.selectionInfoRect.selectionInfoMode = this.selectionInfoMode;
+                this.selectionInfoArea.selectionInfoMode = this.selectionInfoMode;
                 // set selection started
                 this.selectionStarted = true;
+                if (this.selectionInfoArea.points.length === 3) {
+                    this.imageInfo.addSelectionInfo(this.selectionInfoArea.clone());
+                    // update image info
+                    this.imageInfo.updateBordersCanvas();
+                    this.imageInfo.updateHilightCanvas();
+                    this.imageInfo.updateIntensity();
+                    // clear all selections
+                    this.cancelSelecion();
+                }
+                // draw data
                 this.drawImageInfo();
                 this.drawSelectionInfoArea();
             }
@@ -119,7 +129,7 @@ export class ImageInfoAreasEditor {
 
     // onMouseMove
     public onMouseMove(event: MouseEvent): void {
-        // draw mode
+        // draw mode rect
         if (this.selectionStarted && (this.mouseUsageMode === MouseUsageMode.DRAW) && (this.selectionInfoType === SelectionInfoType.RECT)) {
             // get bounding client rect
             let rect = this.imageCanvas.getBoundingClientRect();
@@ -132,7 +142,10 @@ export class ImageInfoAreasEditor {
             this.drawImageInfo();
             this.drawSelectionInfoRect();
         };
-        // drag image
+        // draw mode area
+        if (this.selectionStarted && (this.mouseUsageMode === MouseUsageMode.DRAW) && (this.selectionInfoType === SelectionInfoType.AREA)) {
+        };
+        // drag mode
         if (this.draggingStarted && (this.mouseUsageMode === MouseUsageMode.DRAG)) {
             // get mouse delta move
             let mouseDeltaX = this.mousePrevDragX - event.screenX;
@@ -151,6 +164,7 @@ export class ImageInfoAreasEditor {
         // setup new image info
         if (this.imageInfo != imageInfo) {
             this.imageInfo = imageInfo;
+            this.cancelSelecion();
             this.drawImageInfo();
         }
     }
@@ -159,6 +173,7 @@ export class ImageInfoAreasEditor {
     public setScale(scale: number): void {
         if (this.imageScale !== scale) {
             this.imageScale = scale;
+            this.cancelSelecion();
             this.drawImageInfo();
         }
     }
@@ -199,6 +214,7 @@ export class ImageInfoAreasEditor {
 
     // cancelSelecion
     public cancelSelecion() {
+        this.draggingStarted = false;
         this.selectionStarted = false;
         this.selectionInfoArea.points = [];
         this.drawImageInfo();

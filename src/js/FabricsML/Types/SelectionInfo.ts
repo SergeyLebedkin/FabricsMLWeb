@@ -99,8 +99,8 @@ export class SelectionInfoRect extends SelectionInfo {
     public drawToContext(context: CanvasRenderingContext2D) {
         // fill mask
         context.fillStyle = (this.selectionInfoMode === SelectionInfoMode.INCLUDE) ? "#FF0000" : "#000000";
-        context.fillRect(this.x, this.y, this.width, this.height);
-        context.stroke();
+        context.rect(this.x, this.y, this.width, this.height);
+        context.fill();
     }
 }
 
@@ -149,13 +149,14 @@ export class SelectionInfoArea extends SelectionInfo {
     public drawToContext(context: CanvasRenderingContext2D) {
         // to draw area, there shpuld be a 3 points at least
         if (this.points.length > 2) {
-            context.fillStyle = '#AA0000';
+            context.globalAlpha = 1.0;
+            context.fillStyle = '#FF0000';
             context.beginPath();
             context.moveTo(this.points[0].x, this.points[0].y);
             for (let i = 1; i < this.points.length; i++)
                 context.lineTo(this.points[i].x, this.points[i].y);
             context.closePath();
-            context.fill();
+            context.fill("evenodd");
         }
     }
 }
