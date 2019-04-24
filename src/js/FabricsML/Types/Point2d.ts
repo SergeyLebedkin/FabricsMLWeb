@@ -1,5 +1,5 @@
-// Coord2d
-export class Coord2d {
+// Point2d
+export class Point2d {
     // parameters
     public x: number = 0;
     public y: number = 0;
@@ -11,7 +11,7 @@ export class Coord2d {
     }
 
     // clone
-    public clone(): Coord2d {
-        return new Coord2d(this.x, this.y);
+    public clone(): Point2d {
+        return new Point2d(this.x, this.y);
     }
 }

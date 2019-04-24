@@ -1,6 +1,6 @@
 import { SelectionInfoType } from "./SelectionInfoType"
 import { SelectionInfoMode } from "./SelectionInfoMode"
-import { Coord2d } from "./Coord2d";
+import { Point2d } from "./Point2d";
 
 export class SelectionInfo {
     // SelectionInfoMode
@@ -107,7 +107,7 @@ export class SelectionInfoRect extends SelectionInfo {
 // SelectionInfoArea
 export class SelectionInfoArea extends SelectionInfo {
     // points
-    private points: Array<Coord2d> = new Array<Coord2d>();
+    public points: Array<Point2d> = new Array<Point2d>();
 
     // constructor
     constructor() {
@@ -118,7 +118,7 @@ export class SelectionInfoArea extends SelectionInfo {
 
     // addPoint
     public addPoint(x: number, y: number) {
-        this.points.push(new Coord2d(x, y));
+        this.points.push(new Point2d(x, y));
     }
 
     // constructor
@@ -133,10 +133,10 @@ export class SelectionInfoArea extends SelectionInfo {
 
     // scale region parameters
     public scale(factor: number): void {
-        // sipmly scale
-        this.points.forEach(coord => {
-            coord.x *= factor;
-            coord.y *= factor;
+        // simply scale
+        this.points.forEach((coord, index, array) => {
+            array[index].x *= factor;
+            array[index].y *= factor;
         });
     }
 
