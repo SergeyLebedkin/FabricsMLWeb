@@ -111,7 +111,7 @@ export class ImageInfoAreasEditor {
                     this.imageInfo.updateBordersCanvas();
                     this.imageInfo.updateHilightCanvas();
                     this.imageInfo.updateIntensity();
-                    // clear all selections
+                    // clear all selection states
                     this.cancelSelecion();
                 }
                 // draw data
@@ -234,8 +234,7 @@ export class ImageInfoAreasEditor {
     // drawSelectionInfoArea
     public drawSelectionInfoArea(): void {
         if (this.selectionStarted) {
-            // to draw area, there should be a 3 points at least
-
+            // prepare draw
             this.imageCanvasCtx.globalAlpha = 0.8;
             this.imageCanvasCtx.fillStyle = "blue";
             // simply draw points
@@ -244,7 +243,7 @@ export class ImageInfoAreasEditor {
                     this.selectionInfoArea.points[i].x - 6,
                     this.selectionInfoArea.points[i].y - 6,
                     11, 11);
-            // draw area
+            // to draw area, there should be a 3 points at least
             if (this.selectionInfoArea.points.length > 2) {
                 this.imageCanvasCtx.beginPath();
                 this.imageCanvasCtx.moveTo(this.selectionInfoArea.points[0].x, this.selectionInfoArea.points[0].y);
@@ -253,7 +252,6 @@ export class ImageInfoAreasEditor {
                 this.imageCanvasCtx.closePath();
                 this.imageCanvasCtx.fill();
             }
-            this.imageCanvasCtx.globalAlpha = 1.0;
         }
     }
 

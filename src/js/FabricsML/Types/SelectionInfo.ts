@@ -127,6 +127,7 @@ export class SelectionInfoArea extends SelectionInfo {
         let selectionInfo: SelectionInfoArea = new SelectionInfoArea();
         // copy points (this is a noce method, but I need to test it)
         selectionInfo.points = [...this.points];
+        selectionInfo.selectionInfoMode = this.selectionInfoMode;
         // return new element
         return selectionInfo;
     }
@@ -150,13 +151,13 @@ export class SelectionInfoArea extends SelectionInfo {
         // to draw area, there shpuld be a 3 points at least
         if (this.points.length > 2) {
             context.globalAlpha = 1.0;
-            context.fillStyle = '#FF0000';
+            context.fillStyle = (this.selectionInfoMode === SelectionInfoMode.INCLUDE) ? "#FF0000" : "#000000";
             context.beginPath();
             context.moveTo(this.points[0].x, this.points[0].y);
             for (let i = 1; i < this.points.length; i++)
                 context.lineTo(this.points[i].x, this.points[i].y);
             context.closePath();
-            context.fill("evenodd");
+            context.fill();
         }
     }
 }
