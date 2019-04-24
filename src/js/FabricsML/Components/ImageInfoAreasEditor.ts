@@ -3,6 +3,7 @@ import { MouseUsageMode } from "../Types/MouseUsageMode"
 import { SelectionInfoMode } from "../Types/SelectionInfoMode"
 import { SelectionInfoType } from "../Types/SelectionInfoType"
 import { SelectionInfo, SelectionInfoRect, SelectionInfoArea } from "../Types/SelectionInfo";
+import { Point2d } from "../Types/Point2d";
 
 // ImageInfoRegionsEditor
 export class ImageInfoAreasEditor {
@@ -56,6 +57,12 @@ export class ImageInfoAreasEditor {
         this.parent.appendChild(this.imageCanvas);
     }
 
+    // onKeyDown
+    public onKeyDown(event: KeyboardEvent): void {
+        if (event.key === "Escape")
+            this.cancelSelecion();
+    }
+
     // onMouseUp
     public onMouseUp(event: MouseEvent): void {
         // proceed selection
@@ -100,19 +107,29 @@ export class ImageInfoAreasEditor {
             }
             // draw ares
             if ((this.mouseUsageMode === MouseUsageMode.DRAW) && (this.selectionInfoType === SelectionInfoType.AREA)) {
-                // set selection info
-                this.selectionInfoArea.addPoint(mousePosX, mousePosY);
-                this.selectionInfoArea.selectionInfoMode = this.selectionInfoMode;
-                // set selection started
-                this.selectionStarted = true;
-                if (this.selectionInfoArea.points.length === 3) {
-                    this.imageInfo.addSelectionInfo(this.selectionInfoArea.clone());
-                    // update image info
-                    this.imageInfo.updateBordersCanvas();
-                    this.imageInfo.updateHilightCanvas();
-                    this.imageInfo.updateIntensity();
-                    // clear all selection states
-                    this.cancelSelecion();
+                // check if point more than one
+                if (this.selectionInfoArea.points.length >= 3) {
+                    // if point is close to start point 
+                    let firstPoint: Point2d = this.selectionInfoArea.points[0];
+                    if (firstPoint.distanceToCoord(mousePosX, mousePosY) < 10) {
+                        this.selectionInfoArea.scale(1.0 / this.imageScale);
+                        this.imageInfo.addSelectionInfo(this.selectionInfoArea.clone());
+                        // update image info
+                        this.imageInfo.updateBordersCanvas();
+                        this.imageInfo.updateHilightCanvas();
+                        this.imageInfo.updateIntensity();
+                        // clear all selection states
+                        this.cancelSelecion();
+                    } else {
+                        // add new point
+                        this.selectionInfoArea.addPoint(mousePosX, mousePosY);
+                        this.selectionInfoArea.selectionInfoMode = this.selectionInfoMode;
+                    }
+                } else {
+                    // add new point
+                    this.selectionInfoArea.addPoint(mousePosX, mousePosY);
+                    this.selectionInfoArea.selectionInfoMode = this.selectionInfoMode;
+                    this.selectionStarted = true;
                 }
                 // draw data
                 this.drawImageInfo();
@@ -237,20 +254,29 @@ export class ImageInfoAreasEditor {
             // prepare draw
             this.imageCanvasCtx.globalAlpha = 0.8;
             this.imageCanvasCtx.fillStyle = "blue";
-            // simply draw points
-            for (let i = 0; i < this.selectionInfoArea.points.length; i++)
-                this.imageCanvasCtx.fillRect(
-                    this.selectionInfoArea.points[i].x - 6,
-                    this.selectionInfoArea.points[i].y - 6,
-                    11, 11);
-            // to draw area, there should be a 3 points at least
-            if (this.selectionInfoArea.points.length > 2) {
+            // simply start
+            if (this.selectionInfoArea.points.length > 0) {
+                this.imageCanvasCtx.fillStyle = "green";
                 this.imageCanvasCtx.beginPath();
-                this.imageCanvasCtx.moveTo(this.selectionInfoArea.points[0].x, this.selectionInfoArea.points[0].y);
-                for (let i = 1; i < this.selectionInfoArea.points.length; i++)
-                    this.imageCanvasCtx.lineTo(this.selectionInfoArea.points[i].x, this.selectionInfoArea.points[i].y);
-                this.imageCanvasCtx.closePath();
+                this.imageCanvasCtx.arc(
+                    this.selectionInfoArea.points[0].x,
+                    this.selectionInfoArea.points[0].y,
+                    10, 0, 2 * Math.PI);
                 this.imageCanvasCtx.fill();
+            }
+            // to draw area, there should be a 3 points at least
+            if (this.selectionInfoArea.points.length > 1) {
+                this.imageCanvasCtx.strokeStyle = "blue";
+                this.imageCanvasCtx.beginPath();
+                this.imageCanvasCtx.moveTo(
+                    this.selectionInfoArea.points[0].x,
+                    this.selectionInfoArea.points[0].y);
+                for (let i = 1; i < this.selectionInfoArea.points.length; i++)
+                    this.imageCanvasCtx.lineTo(
+                        this.selectionInfoArea.points[i].x,
+                        this.selectionInfoArea.points[i].y);
+                this.imageCanvasCtx.lineWidth = 3;
+                this.imageCanvasCtx.stroke();
             }
         }
     }

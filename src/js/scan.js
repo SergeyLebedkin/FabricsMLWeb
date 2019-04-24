@@ -181,6 +181,7 @@ window.onload = (event) => {
     image_canvas_panel.addEventListener("mousedown", (event) => gImageInfoAreasEditor.onMouseDown(event));
     image_canvas_panel.addEventListener("mouseup", (event) => gImageInfoAreasEditor.onMouseUp(event));
     image_canvas_panel.addEventListener("mouseup", (event) => gImageInfoIntensityHistViewer.drawHistogram());
+    document.addEventListener("keydown", (event) => gImageInfoAreasEditor.onKeyDown(event));
 
     // apply events
     buttonLoadImageFile.addEventListener("click", buttonLoadImageFileClick);
@@ -192,7 +193,7 @@ window.onload = (event) => {
     radioArea.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoType(SelectionInfoType.AREA));
     radioInclude.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoMode(SelectionInfoMode.INCLUDE));
     radioExclude.addEventListener("click", event => gImageInfoAreasEditor.setSelectionInfoMode(SelectionInfoMode.EXCLUDE));
-    
+
     // checkboxes
     checkboxShowOriginal.addEventListener("click", event => gImageInfoAreasEditor.setShowOriginalImage(checkboxShowOriginal.checked));
 
