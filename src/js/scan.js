@@ -34,7 +34,6 @@ function buttonLoadImageFileClick(event) {
 
                 // load tiff from file
                 let tiff = new Tiff({ buffer: event.currentTarget.result });
-                let data = 1024;
                 let sam = tiff.getField(TIFFTAG_SEM);
                 let fibics = tiff.getField(TIFFTAG_Fibics);
                 event.currentTarget.imageInfo.copyFromCanvas(tiff.toCanvas());
