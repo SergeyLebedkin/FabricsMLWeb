@@ -55,6 +55,8 @@ export class ImageInfoAreasEditor {
         this.imageCanvas.style.border = "1px solid orange";
         this.imageCanvasCtx = this.imageCanvas.getContext('2d');
         this.parent.appendChild(this.imageCanvas);
+        // preparations
+        this.updateMouseCursor();
     }
 
     // onKeyDown
@@ -199,16 +201,7 @@ export class ImageInfoAreasEditor {
     public setMouseUsageMode(mouseUsageMode: MouseUsageMode): void {
         this.mouseUsageMode = mouseUsageMode;
         this.cancelSelecion();
-        switch (this.mouseUsageMode) {
-            case MouseUsageMode.DRAW: {
-                this.imageCanvas.style.cursor = "default";
-                break;
-            }
-            case MouseUsageMode.DRAG: {
-                this.imageCanvas.style.cursor = "move";
-                break;
-            }
-        }
+        this.updateMouseCursor();
     }
 
     // setSelectionInfoType
@@ -227,6 +220,20 @@ export class ImageInfoAreasEditor {
     public setShowOriginalImage(showOriginal: boolean): void {
         this.showOriginalImage = showOriginal;
         this.drawImageInfo();
+    }
+
+    //  updateMouseCursor
+    private updateMouseCursor() {
+        switch (this.mouseUsageMode) {
+            case MouseUsageMode.DRAW: {
+                this.imageCanvas.style.cursor = "crosshair";
+                break;
+            }
+            case MouseUsageMode.DRAG: {
+                this.imageCanvas.style.cursor = "move";
+                break;
+            }
+        }
     }
 
     // cancelSelecion
