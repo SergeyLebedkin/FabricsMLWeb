@@ -51,7 +51,7 @@ function buttonLoadImageFileClick(event) {
                         if (imagePixelSizeValueStr.indexOf("nm") >= 0)
                             imagePixelSize *= 1.0e-6;
                         // set image pixel size
-                        event.currentTarget.imageInfo.imageResolution = imagePixelSize;
+                        event.currentTarget.imageInfo.imageResolution = imagePixelSize.toFixed(7);
                     }
                 }
 
@@ -191,8 +191,8 @@ function updateResolutionInputs() {
         let imageInfo = gImageInfoIntensityHistViewer.imageInfo;
         inputImageDimXpx.value = imageInfo.canvasImage.width;
         inputImageDimYpx.value = imageInfo.canvasImage.height;
-        inputImageDimXmm.value = imageInfo.canvasImage.width * imageInfo.imageResolution;
-        inputImageDimYmm.value = imageInfo.canvasImage.height * imageInfo.imageResolution;
+        inputImageDimXmm.value = (imageInfo.canvasImage.width * imageInfo.imageResolution).toFixed(5);
+        inputImageDimYmm.value = (imageInfo.canvasImage.height * imageInfo.imageResolution).toFixed(5);
         inputImageResmm.value = imageInfo.imageResolution;
     }
 }
