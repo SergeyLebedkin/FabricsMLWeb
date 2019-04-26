@@ -22,7 +22,7 @@ export class ImageInfoAreasEditor {
     private mouseUsageMode: MouseUsageMode = MouseUsageMode.DRAW;
     // selection parameters
     private selectionStarted: boolean = false;
-    private selectionInfoType: SelectionInfoType = SelectionInfoType.RECT;
+    private selectionInfoType: SelectionInfoType = SelectionInfoType.AREA;
     private selectionInfoMode: SelectionInfoMode = SelectionInfoMode.INCLUDE;
     private selectionInfoRect: SelectionInfoRect = null;
     private selectionInfoArea: SelectionInfoArea = null;
@@ -46,7 +46,7 @@ export class ImageInfoAreasEditor {
         this.mouseUsageMode = MouseUsageMode.DRAW;
         // selection info
         this.selectionStarted = false;
-        this.selectionInfoType = SelectionInfoType.RECT;
+        this.selectionInfoType = SelectionInfoType.AREA;
         this.selectionInfoMode = SelectionInfoMode.INCLUDE;
         this.selectionInfoRect = new SelectionInfoRect(0, 0, 0, 0);
         this.selectionInfoArea = new SelectionInfoArea();

@@ -18,6 +18,8 @@ export class ImageInfo {
     public intensityLow: number = 90;
     public intensityMedium: number = 150;
     public intensityHigh: number = 250;
+    // image resolution
+    public imageResolution: number = 1.0;
 
     // constructor
     constructor(fileRef: File) {
@@ -211,5 +213,25 @@ export class ImageInfo {
     // setIntensityHigh
     public setIntensityHigh(intensityHigh: number) {
         this.intensityHigh = intensityHigh;
+    }
+
+    // toStringXmlNode
+    public toStringXmlNode(): string {
+        // exract file name
+        var filename = this.fileRef.name.substr(0, this.fileRef.name.lastIndexOf('.'));
+
+        // generate xml node
+        let node: string = "";
+        node += "  <ImageData>" + "\r\n"
+        node += '    <ImageName FileName="' + this.fileRef.name + '"></ImageName>' + "\r\n";
+        node += '    <ImageBasename FileBasename="' + filename + '"></ImageBasename>' + "\r\n";
+        node += '    <IntensityBoundary LowIntensity="' + this.intensityLow + '" MediumIntensity="' + this.intensityMedium + '" HighIntensity="' + this.intensityHigh + '"></IntensityBoundary>' + "\r\n";
+        node += "    <AreaSelections>" + "\r\n";
+        this.selectionInfos.forEach(info => {
+            node += info.toStringXmlNode() + "\r\n";
+        })
+        node += "    </AreaSelections>" + "\r\n";
+        node += "  </ImageData>";
+        return node;
     }
 }

@@ -38,6 +38,23 @@ function buttonLoadImageFileClick(event) {
                 let fibics = tiff.getField(TIFFTAG_Fibics);
                 event.currentTarget.imageInfo.copyFromCanvas(tiff.toCanvas());
 
+                // read SAM info
+                if (sam > 0) {
+                    let enc = new TextDecoder("utf-8");
+                    let fileString = enc.decode(event.currentTarget.result);
+                    let fileStrings = fileString.split("\n")
+                    let imagePixelSizeIndex = fileStrings.findIndex(val => val.trim().startsWith("Image Pixel Size"));
+                    if (imagePixelSizeIndex >= 0) {
+                        let imagePixelSizeSubstrs = fileStrings[imagePixelSizeIndex].split("=");
+                        let imagePixelSizeValueStr = imagePixelSizeSubstrs[1].trim();
+                        let imagePixelSize = parseFloat(imagePixelSizeValueStr);
+                        if (imagePixelSizeValueStr.indexOf("nm") >= 0)
+                            imagePixelSize *= 1.0e-6;
+                        // set image pixel size
+                        event.currentTarget.imageInfo.imageResolution = imagePixelSize;
+                    }
+                }
+
                 // image mask canvas
                 if (!gImageInfoAreasEditor.imageInfo)
                     gImageInfoAreasEditor.setImageInfo(event.currentTarget.imageInfo);
@@ -45,6 +62,7 @@ function buttonLoadImageFileClick(event) {
                 if (!gImageInfoIntensityHistViewer.imageInfo) {
                     gImageInfoIntensityHistViewer.setImageInfo(event.currentTarget.imageInfo);
                     updateIntensityInputs();
+                    updateResolutionInputs();
                 }
             }
             fileReader.readAsArrayBuffer(imageInfo.fileRef);
@@ -80,6 +98,7 @@ function selectImagesUpdate() {
         selectedIndex = 0;
     selectImages.selectedIndex = selectedIndex;
     updateIntensityInputs();
+    updateResolutionInputs();
 }
 
 // scale down bnt click
@@ -132,6 +151,7 @@ function selectImagesOnChange(event) {
     gImageInfoAreasEditor.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
     gImageInfoIntensityHistViewer.setImageInfo(gImageInfoList[selectImages.selectedIndex]);
     updateIntensityInputs();
+    updateResolutionInputs();
 }
 
 // buttonSaveFabricsOnClick
@@ -144,14 +164,11 @@ function buttonSaveFabricsOnClick(event) {
 
     // generate xml string
     var regionsString = '<?xml version="1.0" encoding="utf-8"?>' + "\r\n";
-    regionsString += '<FabricsMLData>' + "\r\n";
-    regionsString += '  <ImageData>' + "\r\n";
-    regionsString += '    <ImageName FileName="' + gImageInfoAreasEditor.imageInfo.fileRef.name + '"></ImageName>' + "\r\n";
-    regionsString += '    <ImageBasename FileBasename="' + filename + '"></ImageBasename>' + "\r\n";
-    regionsString += '  </ImageData>' + "\r\n";
-    regionsString += '</FabricsMLData>';
-    regionsString += '<HighResolutionImageData>' + "\r\n";
-    regionsString += '</HighResolutionImageData>';
+    regionsString += "<FabricsMLData>" + "\r\n";
+    regionsString += gImageInfoAreasEditor.imageInfo.toStringXmlNode() + "\r\n";
+    regionsString += "</FabricsMLData>" + "\r\n";
+    regionsString += "<HighResolutionImageData>" + "\r\n";
+    regionsString += "</HighResolutionImageData>" + "\r\n";
 
     downloadFile(regionsString, filename + ".xml", 'text/plain');
 }
@@ -165,6 +182,18 @@ function updateIntensityInputs() {
         textIntensityLow.value = rangeIntensityLow.value;
         textIntensityMedium.value = rangeIntensityMedium.value;
         textIntensityHigh.value = rangeIntensityHigh.value;
+    }
+}
+
+// updateResolutionInputs
+function updateResolutionInputs() {
+    if (gImageInfoIntensityHistViewer.imageInfo) {
+        let imageInfo = gImageInfoIntensityHistViewer.imageInfo;
+        inputImageDimXpx.value = imageInfo.canvasImage.width;
+        inputImageDimYpx.value = imageInfo.canvasImage.height;
+        inputImageDimXmm.value = imageInfo.canvasImage.width * imageInfo.imageResolution;
+        inputImageDimYmm.value = imageInfo.canvasImage.height * imageInfo.imageResolution;
+        inputImageResmm.value = imageInfo.imageResolution;
     }
 }
 
@@ -205,6 +234,7 @@ window.onload = (event) => {
     buttonScaleUp.onclick = buttonScaleUpClick;
 
     updateIntensityInputs();
+    updateResolutionInputs();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

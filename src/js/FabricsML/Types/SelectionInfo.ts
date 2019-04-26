@@ -21,6 +21,14 @@ export class SelectionInfo {
     public drawToContext(context: CanvasRenderingContext2D) {
         // nothing (MUST be empty)
     }
+
+    // toStringXmlNode
+    public toStringXmlNode(): string {
+        if (this.selectionInfoMode === SelectionInfoMode.INCLUDE)
+            return "      <Selection/>";
+        return "      <Exclusion/>";
+    }
+
 };
 
 // SelectionInfoRect
@@ -99,8 +107,34 @@ export class SelectionInfoRect extends SelectionInfo {
     public drawToContext(context: CanvasRenderingContext2D) {
         // fill mask
         context.fillStyle = (this.selectionInfoMode === SelectionInfoMode.INCLUDE) ? "#FF0000" : "#000000";
-        context.rect(this.x, this.y, this.width, this.height);
-        context.fill();
+        context.beginPath();
+        context.fillRect(this.x, this.y, this.width, this.height);
+        context.closePath();
+        //context.fill();
+        console.log(this.x, this.y, this.width, this.height);
+    }
+
+    // toStringXmlNode
+    public toStringXmlNode(): string {
+        let node: string = "      ";
+        // append open tag
+        if (this.selectionInfoMode === SelectionInfoMode.INCLUDE)
+            node += "<Selection ";
+        if (this.selectionInfoMode === SelectionInfoMode.EXCLUDE)
+            node += "<Exclusion ";
+
+        // append points
+        node += "x0=" + (this.x) + " y0=" + (this.y) + " ";
+        node += "x1=" + (this.x + this.width) + " y1=" + (this.y) + " ";
+        node += "x2=" + (this.x + this.width) + " y2=" + (this.y + this.height) + " ";
+        node += "x3=" + (this.x) + " y3=" + (this.y + this.height) + " ";
+
+        // append close tag
+        if (this.selectionInfoMode === SelectionInfoMode.INCLUDE)
+            node += "></Selection>";
+        if (this.selectionInfoMode === SelectionInfoMode.EXCLUDE)
+            node += "></Exclusion>";
+        return node;
     }
 }
 
@@ -159,5 +193,28 @@ export class SelectionInfoArea extends SelectionInfo {
             context.closePath();
             context.fill();
         }
+    }
+
+    // toStringXmlNode
+    public toStringXmlNode(): string {
+        let node: string = "      ";
+        // append open tag
+        if (this.selectionInfoMode === SelectionInfoMode.INCLUDE)
+            node += "<Selection ";
+        if (this.selectionInfoMode === SelectionInfoMode.EXCLUDE)
+            node += "<Exclusion ";
+
+        // append points
+        this.points.forEach((point, index) => {
+            node += "x" + index + '="' + point.x + '" ';
+            node += "y" + index + '="' + point.y + '" ';
+        })
+
+        // append close tag
+        if (this.selectionInfoMode === SelectionInfoMode.INCLUDE)
+            node += "></Selection>";
+        if (this.selectionInfoMode === SelectionInfoMode.EXCLUDE)
+            node += "></Exclusion>";
+        return node;
     }
 }
