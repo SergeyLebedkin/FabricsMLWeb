@@ -124,10 +124,10 @@ export class SelectionInfoRect extends SelectionInfo {
             node += "<Exclusion ";
 
         // append points
-        node += "x0=" + (this.x) + " y0=" + (this.y) + " ";
-        node += "x1=" + (this.x + this.width) + " y1=" + (this.y) + " ";
-        node += "x2=" + (this.x + this.width) + " y2=" + (this.y + this.height) + " ";
-        node += "x3=" + (this.x) + " y3=" + (this.y + this.height) + " ";
+        node += 'x0="' + (this.x) + '" y0="' + (this.y) + '" ';
+        node += 'x1="' + (this.x + this.width) + '" y1="' + (this.y) + '" ';
+        node += 'x2="' + (this.x + this.width) + '" y2="' + (this.y + this.height) + '" ';
+        node += 'x3="' + (this.x) + '" y3="' + (this.y + this.height) + '" ';
 
         // append close tag
         if (this.selectionInfoMode === SelectionInfoMode.INCLUDE)
