@@ -8,81 +8,95 @@
 
 <body>
     <div class="main-panel">
+
         <!-- left panel -->
         <div class="left-panel">
-            <button id="buttonLoadImageFile">Load image</button>
-            <input type="file" id="inputImageFile" style="display:none">
-            <div class="bordered-panel">
-                <div class="row-panel">
-                    <a style="width: 100px">Mouse mode:</a>
-                    <input type="radio" id="radioDraw" name="MouseMode" checked>
-                    <a style="width: 90px">Draw</a>
-                    <input type="radio" id="radioDrag" name="MouseMode">
-                    <a style="width: 90px">Drag</a>
-                </div>
-                <div class="row-panel">
-                    <a style="width: 100px">Draw mode:</a>
-                    <input type="radio" id="radioArea" name="DrawMode" checked>
-                    <a style="width: 90px">Polygon</a>
-                    <input type="radio" id="radioRect" name="DrawMode">
-                    <a style="width: 90px">Rect</a>
-                </div>
-                <div class="row-panel">
-                    <a style="width: 100px">Select area:</a>
-                    <input type="radio" id="radioInclude" name="ColorMap"checked>
-                    <a style="width: 90px">Include</a>
-                    <input type="radio" id="radioExclude" name="ColorMap">
-                    <a style="width: 90px">Exclude</a>
-                </div>
-            </div>
-            <select id="selectImages" onchange="selectImagesOnChange()"></select>
             <div class="row-panel">
-                <a style="width: 130px">Image dims (px):</a>                
-                <a>x: </a>
-                <input type="text" readonly id="inputImageDimXpx" style="width: 60px">
-                <a style="width: 15px"></a>
-                <a>y: </a>
-                <input type="text" readonly id="inputImageDimYpx" style="width: 60px">
+                <button id="buttonTabPreProcess">Pre-process</button>
+                <button id="buttonTabAnalysis">Analysis</button>
             </div>
-            <div class="row-panel">
-                <a style="width: 130px">Image dims (mm):</a>                
-                <a>x: </a>
-                <input type="text" readonly id="inputImageDimXmm" style="width: 60px">
-                <a style="width: 15px"></a>
-                <a>y: </a>
-                <input type="text" readonly id="inputImageDimYmm" style="width: 60px">
-            </div>
-            <div class="row-panel">
-                <a style="width: 130px">Image resolution:</a>
-                <input type="text" readonly id="inputImageResmm" style="width: 90px">
-                <a style="width: 30px">[mm]</a>
-            </div>
-            <div id="histogram_panel">
-                <div id="histogram_canvas_panel">
-                </div>
+            <br>
+            <div id="panelPreProcess" style="display: inline-block">
+                <button id="buttonLoadImageFile" style="width: 100%">Load image</button>
+                <input type="file" id="inputImageFile" style="display:none">
                 <div class="bordered-panel">
                     <div class="row-panel">
-                        <a style="width: 100px">Intensity LOW</a>
-                        <input type="range" id="rangeIntensityLow" min="0" max="255" value="90" style="width:100%"/>
-                        <input type="text" id="textIntensityLow" style="width: 25px" readonly/>
+                        <a style="width: 100px">Mouse mode:</a>
+                        <input type="radio" id="radioDraw" name="MouseMode" checked>
+                        <a style="width: 90px">Draw</a>
+                        <input type="radio" id="radioDrag" name="MouseMode">
+                        <a style="width: 90px">Drag</a>
                     </div>
                     <div class="row-panel">
-                        <a style="width: 100px">Intensity MEDIUM</a>
-                        <input type="range" id="rangeIntensityMedium" min="0" max="255" value="150" style="width:100%"/>
-                        <input type="text" id="textIntensityMedium" style="width: 25px" readonly/>
+                        <a style="width: 100px">Draw mode:</a>
+                        <input type="radio" id="radioArea" name="DrawMode" checked>
+                        <a style="width: 90px">Polygon</a>
+                        <input type="radio" id="radioRect" name="DrawMode">
+                        <a style="width: 90px">Rect</a>
                     </div>
                     <div class="row-panel">
-                        <a style="width: 100px">Intensity HI</a>
-                        <input type="range" id="rangeIntensityHigh" min="0" max="255" value="250" style="width:100%"/>
-                        <input type="text" id="textIntensityHigh" style="width: 25px" readonly/>
+                        <a style="width: 100px">Select area:</a>
+                        <input type="radio" id="radioInclude" name="ColorMap" checked>
+                        <a style="width: 90px">Include</a>
+                        <input type="radio" id="radioExclude" name="ColorMap">
+                        <a style="width: 90px">Exclude</a>
                     </div>
                 </div>
+                <select id="selectImages" onchange="selectImagesOnChange()"></select>
+                <div class="row-panel">
+                    <a style="width: 130px">Image dims (px):</a>
+                    <a>x: </a>
+                    <input type="text" readonly id="inputImageDimXpx" style="width: 60px">
+                    <a style="width: 15px"></a>
+                    <a>y: </a>
+                    <input type="text" readonly id="inputImageDimYpx" style="width: 60px">
+                </div>
+                <div class="row-panel">
+                    <a style="width: 130px">Image dims (mm):</a>
+                    <a>x: </a>
+                    <input type="text" readonly id="inputImageDimXmm" style="width: 60px">
+                    <a style="width: 15px"></a>
+                    <a>y: </a>
+                    <input type="text" readonly id="inputImageDimYmm" style="width: 60px">
+                </div>
+                <div class="row-panel">
+                    <a style="width: 130px">Image resolution:</a>
+                    <input type="text" readonly id="inputImageResmm" style="width: 90px">
+                    <a style="width: 30px">[mm]</a>
+                </div>
+                <div id="histogram_panel">
+                    <div id="histogram_canvas_panel">
+                    </div>
+                    <div class="bordered-panel">
+                        <div class="row-panel">
+                            <a style="width: 100px">Intensity LOW</a>
+                            <input type="range" id="rangeIntensityLow" min="0" max="255" value="90"
+                                style="width:100%" />
+                            <input type="text" id="textIntensityLow" style="width: 25px" readonly />
+                        </div>
+                        <div class="row-panel">
+                            <a style="width: 100px">Intensity MEDIUM</a>
+                            <input type="range" id="rangeIntensityMedium" min="0" max="255" value="150"
+                                style="width:100%" />
+                            <input type="text" id="textIntensityMedium" style="width: 25px" readonly />
+                        </div>
+                        <div class="row-panel">
+                            <a style="width: 100px">Intensity HI</a>
+                            <input type="range" id="rangeIntensityHigh" min="0" max="255" value="250"
+                                style="width:100%" />
+                            <input type="text" id="textIntensityHigh" style="width: 25px" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <input type="checkbox" id="checkboxShowOriginal" name="checkboxShowOriginal">
+                    <label for="checkboxShowOriginal">Show original image</label>
+                </div>
+                <button id="buttonSaveFabrics"  style="width: 100%">Save Fabrics</button>
             </div>
-            <div>
-                <input type="checkbox" id="checkboxShowOriginal" name="checkboxShowOriginal">
-                <label for="checkboxShowOriginal">Show original image</label>
+            <div id="panelAnalysis" style="display: none">
+                <button>Load</button>
             </div>
-            <button id="buttonSaveFabrics">Save Fabrics</button>
         </div>
         <!-- center panel -->
         <div class="center-panel">
