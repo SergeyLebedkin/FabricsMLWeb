@@ -14,18 +14,6 @@ let gImageInfoIntensityHistViewer = null;
 // EVENTS
 ///////////////////////////////////////////////////////////////////////////////
 
-// buttonTabPreProcessClick
-function buttonTabPreProcessClick(event) {
-    panelPreProcess.style.display = "inline-block";
-    panelAnalysis.style.display = "none";
-}
-
-// buttonTabPreProcessClick
-function buttonTabAnalysisClick(event) {
-    panelPreProcess.style.display = "none";
-    panelAnalysis.style.display = "block";
-}
-
 // buttonLoadImageFileClick
 function buttonLoadImageFileClick(event) {
     inputImageFile.accept = ".tif,.tiff";
@@ -215,9 +203,6 @@ window.onload = (event) => {
     // create ImageInfoAreasEditor
     gImageInfoIntensityHistViewer = new ImageInfoIntensityHistViewer(histogram_canvas_panel);
     gImageInfoIntensityHistViewer.drawHistogram();
-
-    buttonTabPreProcess.addEventListener("click", event => buttonTabPreProcessClick(event));
-    buttonTabAnalysis.addEventListener("click", event => buttonTabAnalysisClick(event));
 
     // create ImageInfoAreasEditor
     gImageInfoAreasEditor = new ImageInfoAreasEditor(image_canvas_panel);

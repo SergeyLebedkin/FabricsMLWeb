@@ -5,11 +5,12 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: './src/js/scan.js'
+        scan: './src/js/scan.js',
+        select: './src/js/select.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'js/scan.js'
+        filename: 'js/[name].js'
     },
     node: {
         fs: 'empty' // need for tiff.js
@@ -39,8 +40,15 @@ module.exports = {
         ]),
         new HtmlWebpackPlugin({
             inject: false,
-            template: './src/index.html',
-            filename: 'index.html'
+            template: './src/scan.html',
+            filename: 'scan.html',
+            chunks: ['scan']
+        }),
+        new HtmlWebpackPlugin({
+            inject: false,
+            template: './src/select.html',
+            filename: 'index.html',
+            chunks: ['select']
         })
     ]
 }
