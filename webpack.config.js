@@ -47,7 +47,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             inject: false,
             template: './src/select.html',
-            filename: 'index.html',
+            filename: 'select.html',
             chunks: ['select']
         })
     ]
