@@ -6,7 +6,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     entry: {
         scan: './src/js/scan.js',
-        select: './src/js/select.js'
+        select: './src/js/select.js',
+        index: './src/js/index.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -49,6 +50,12 @@ module.exports = {
             template: './src/select.html',
             filename: 'select.html',
             chunks: ['select']
+        }),
+        new HtmlWebpackPlugin({
+            inject: false,
+            template: './src/index.html',
+            filename: 'index.html',
+            chunks: ['index']
         })
     ]
 }
