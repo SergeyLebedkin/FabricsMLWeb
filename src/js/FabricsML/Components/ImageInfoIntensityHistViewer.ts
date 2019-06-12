@@ -42,13 +42,13 @@ export class ImageInfoIntensityHistViewer {
                 x1: this.imageInfo.intensityLow
             }, {
                 // intensity medium line
-                line: { color: 'rgb(0, 255, 0)',  width: 1 },
+                line: { color: 'rgb(0, 0, 255)',  width: 1 },
                 type: 'line', yref: 'paper', y0: 0, y1: 1,
                 x0: this.imageInfo.intensityMedium,
                 x1: this.imageInfo.intensityMedium
             }, {
                 // intensity high line
-                line: { color: 'rgb(0, 0, 255)',  width: 1 },
+                line: { color: 'rgb(0, 255, 0)',  width: 1 },
                 type: 'line', yref: 'paper', y0: 0, y1: 1,
                 x0: this.imageInfo.intensityHigh,
                 x1: this.imageInfo.intensityHigh

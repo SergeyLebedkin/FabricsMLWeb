@@ -111,7 +111,6 @@ export class SelectionInfoRect extends SelectionInfo {
         context.fillRect(this.x, this.y, this.width, this.height);
         context.closePath();
         //context.fill();
-        console.log(this.x, this.y, this.width, this.height);
     }
 
     // toStringXmlNode

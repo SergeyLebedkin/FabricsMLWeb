@@ -1,8 +1,6 @@
 import Tiff from "tiff.js";
 import { ImageInfo } from "./FabricsML/Types/ImageInfo";
 import { MouseUsageMode } from "./FabricsML/Types/MouseUsageMode";
-import { SelectionInfoType } from "./FabricsML/Types/SelectionInfoType";
-import { SelectionInfoMode } from "./FabricsML/Types/SelectionInfoMode";
 import { ImageInfoAreasEditor } from "./FabricsML/Components/ImageInfoAreasEditor";
 
 let gImageInfoList = [];
@@ -68,6 +66,22 @@ function buttonLoadImageFileClick(event) {
         selectImagesUpdate();
     }
     inputImageFile.click();
+}
+
+// buttonLoadImageDataFileClick
+function buttonLoadImageDataFileClick(event) {
+    // check for current image info
+    if (!gImageInfoAreasEditor.imageInfo) return;
+
+    // load image data xml
+    inputImageDataFile.accept = ".xml";
+    inputImageDataFile.onchange = (event) => {
+        gImageInfoAreasEditor.imageInfo.onloadImageDataFile = () => {
+            gImageInfoAreasEditor.drawImageInfo();
+        }
+        gImageInfoAreasEditor.imageInfo.loadImageDataFile(event.currentTarget.files[0]);
+    }
+    inputImageDataFile.click();
 }
 
 // selectImagesUpdate
@@ -137,8 +151,10 @@ window.onload = (event) => {
 
     // apply events
     buttonLoadImageFile.addEventListener("click", buttonLoadImageFileClick);
+    buttonLoadImageDataFile.addEventListener("click", buttonLoadImageDataFileClick);
 
     // events
+    selectImages.onchange = selectImagesOnChange;
     buttonScaleDown.onclick = buttonScaleDownClick;
     buttonScaleUp.onclick = buttonScaleUpClick;
 

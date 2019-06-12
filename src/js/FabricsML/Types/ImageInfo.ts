@@ -1,18 +1,27 @@
 import { SelectionInfo } from "./SelectionInfo"
 import { SelectionInfoType } from "./SelectionInfoType"
 import { SelectionInfoMode } from "./SelectionInfoMode"
+import { PixelLocationOnOverview } from "./PixelLocationOnOverview";
 
 // ImageInfo
 export class ImageInfo {
     // file reference
     public fileRef: File = null;
+    public dataFileRef: File = null;
     // canvases
     public canvasImage: HTMLCanvasElement = null;
     public canvasMask: HTMLCanvasElement = null;
     public canvasHiLight: HTMLCanvasElement = null;
     public canvasBorders: HTMLCanvasElement = null;
+    public canvasHighResArea: HTMLCanvasElement = null;
+    public canvasHighResMask: HTMLCanvasElement = null;
     // selection infos
     public selectionInfos: Array<SelectionInfo> = [];
+    // high resolution image data
+    public highResolutionImageData: Array<PixelLocationOnOverview> = [];
+    // high resolution image suggestions settings
+    public HRWidth: number = 30;
+    public HRHeight: number = 23;
     // intensity
     public intensity: Uint32Array = new Uint32Array(256);
     public intensityLow: number = 90;
@@ -20,6 +29,8 @@ export class ImageInfo {
     public intensityHigh: number = 250;
     // image resolution
     public imageResolution: number = 1.0;
+    // events
+    public onloadImageDataFile: (this: ImageInfo) => any = null;
 
     // constructor
     constructor(fileRef: File) {
@@ -30,13 +41,21 @@ export class ImageInfo {
         this.canvasMask = document.createElement("canvas");
         this.canvasHiLight = document.createElement("canvas");
         this.canvasBorders = document.createElement("canvas");
+        this.canvasHighResArea = document.createElement("canvas");
+        this.canvasHighResMask = document.createElement("canvas");
         // selections
         this.selectionInfos = [];
+        // high resolution image data
+        this.highResolutionImageData = [];
+        this.HRWidth = 30;
+        this.HRHeight = 23;
         // intensity
         this.intensity.fill(0);
         this.intensityLow = 90;
         this.intensityMedium = 150;
         this.intensityHigh = 250;
+        // events
+        this.onloadImageDataFile = null;
     }
 
     // copyFromCanvas
@@ -50,6 +69,10 @@ export class ImageInfo {
         this.canvasHiLight.height = canvas.height;
         this.canvasBorders.width = canvas.width;
         this.canvasBorders.height = canvas.height;
+        this.canvasHighResArea.width = canvas.width;
+        this.canvasHighResArea.height = canvas.height;
+        this.canvasHighResMask.width = canvas.width;
+        this.canvasHighResMask.height = canvas.height;
         // copy data
         let canvasImageCtx = this.canvasImage.getContext("2d");
         canvasImageCtx.drawImage(canvas, 0, 0);
@@ -66,6 +89,18 @@ export class ImageInfo {
         selectionInfo.drawToContext(canvasMaskCtx);
         // add selection info
         this.selectionInfos.push(selectionInfo);
+    }
+
+    // addPixelLocationOnOverview
+    public addPixelLocationOnOverview(pixelLocation: PixelLocationOnOverview): void {
+        // get context
+        let canvasHighResAreaCtx = this.canvasHighResArea.getContext("2d") as CanvasRenderingContext2D;
+        canvasHighResAreaCtx.fillStyle = "#FF8000";
+        canvasHighResAreaCtx.strokeStyle = "#FF8000";
+        canvasHighResAreaCtx.lineWidth = 4;
+        canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, this.HRWidth*4, this.HRHeight*4);
+        // add pixel location on overview
+        this.highResolutionImageData.push(pixelLocation);
     }
 
     // updateHilightCanvas
@@ -213,6 +248,36 @@ export class ImageInfo {
     // setIntensityHigh
     public setIntensityHigh(intensityHigh: number) {
         this.intensityHigh = intensityHigh;
+    }
+
+    // loadImageDataFile
+    public loadImageDataFile(file: File): void {
+        // store data file ref
+        this.dataFileRef = file;
+
+        // load from file
+        let fileReader = new FileReader();
+        (fileReader as any).imageInfo = this;
+        fileReader.onload = event => {
+            let parser = new DOMParser();
+            let xml = parser.parseFromString(fileReader.result.toString(), "text/xml");
+            // get HR elements
+            let HRElement = xml.getElementsByTagName("HighREsolutionImageSuggestionsSettings")[0];
+            this.HRWidth = parseFloat(HRElement.attributes.getNamedItem("HRWidth").value);
+            this.HRHeight = parseFloat(HRElement.attributes.getNamedItem("HRHeight").value);
+            // get pixel locations
+            let pixelLocationOnOverviews = xml.getElementsByTagName("PixelLocationOnOverview");
+            for (let i = 0; i < pixelLocationOnOverviews.length; i++) {
+                let x = parseFloat(pixelLocationOnOverviews[i].getAttribute("x"));
+                let y = parseFloat(pixelLocationOnOverviews[i].getAttribute("y"));
+                let pixelLocationOnOverview = new PixelLocationOnOverview(x, y);
+                this.addPixelLocationOnOverview(pixelLocationOnOverview);
+            }
+            // call event
+            if (this.onloadImageDataFile)
+                this.onloadImageDataFile();
+        }
+        fileReader.readAsText(file);
     }
 
     // toStringXmlNode
