@@ -35,9 +35,10 @@ export class ImageInfo {
     public onloadImageDataFile: (this: ImageInfo, imageInfo: ImageInfo) => any = null;
 
     // constructor
-    constructor(fileRef: File) {
+    constructor() {
         // file reference
-        this.fileRef = fileRef;
+        this.fileRef = null;
+        this.dataFileRef = null;
         // canvases
         this.canvasImage = document.createElement("canvas");
         this.canvasMask = document.createElement("canvas");
@@ -255,6 +256,9 @@ export class ImageInfo {
 
     // loadImageDataFile
     public loadImageFile(file: File): void {
+        // store data file ref
+        this.fileRef = file;
+
         // load from file
         let fileReader = new FileReader();
         fileReader.onload = event => {

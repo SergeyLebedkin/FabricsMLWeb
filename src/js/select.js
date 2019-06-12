@@ -14,20 +14,21 @@ let gImageInfoAreasEditor = null;
 function buttonLoadImageFileClick(event) {
     inputImageFile.accept = ".tif,.tiff";
     inputImageFile.onchange = function (event) {
-        let imageInfo = new ImageInfo(event.currentTarget.files[0]);
-        imageInfo.onloadImageFile = (imageInfo) => {
-            // image mask canvas
-            if (!gImageInfoAreasEditor.imageInfo) {
-                gImageInfoAreasEditor.setImageInfo(imageInfo);
-                updateResolutionInputs();
+        for (let i = 0; i < event.currentTarget.files.length; i++) {
+            let imageInfo = new ImageInfo();
+            imageInfo.onloadImageFile = (imageInfo) => {
+                // add image info
+                gImageInfoList.push(imageInfo);
+                // update select images
+                selectImagesUpdate();
+                // image mask canvas
+                if (!gImageInfoAreasEditor.imageInfo) {
+                    gImageInfoAreasEditor.setImageInfo(imageInfo);
+                    updateResolutionInputs();
+                }
             }
+            imageInfo.loadImageFile(event.currentTarget.files[i]);
         }
-        imageInfo.loadImageFile(event.currentTarget.files[0]);
-
-        // add image info
-        gImageInfoList.push(imageInfo);
-        // update select images
-        selectImagesUpdate();
     }
     inputImageFile.click();
 }

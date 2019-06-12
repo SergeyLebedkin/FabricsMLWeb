@@ -19,59 +19,24 @@ function buttonLoadImageFileClick(event) {
     inputImageFile.accept = ".tif,.tiff";
     inputImageFile.onchange = function (event) {
         for (let i = 0; i < event.currentTarget.files.length; i++) {
-            // create image info
-            let imageInfo = new ImageInfo(event.currentTarget.files[i]);
-
-            // load from file
-            let fileReader = new FileReader();
-            fileReader.imageInfo = imageInfo;
-            fileReader.onload = (event) => {
-
-                // Tiff tag for smart SEM
-                const TIFFTAG_SEM = 34118;
-                // Tiff tag for Fibics
-                const TIFFTAG_Fibics = 51023;
-
-                // load tiff from file
-                let tiff = new Tiff({ buffer: event.currentTarget.result });
-                let sam = tiff.getField(TIFFTAG_SEM);
-                let fibics = tiff.getField(TIFFTAG_Fibics);
-                event.currentTarget.imageInfo.copyFromCanvas(tiff.toCanvas());
-
-                // read SAM info
-                if (sam > 0) {
-                    let enc = new TextDecoder("utf-8");
-                    let fileString = enc.decode(event.currentTarget.result);
-                    let fileStrings = fileString.split("\n")
-                    let imagePixelSizeIndex = fileStrings.findIndex(val => val.trim().startsWith("Image Pixel Size"));
-                    if (imagePixelSizeIndex >= 0) {
-                        let imagePixelSizeSubstrs = fileStrings[imagePixelSizeIndex].split("=");
-                        let imagePixelSizeValueStr = imagePixelSizeSubstrs[1].trim();
-                        let imagePixelSize = parseFloat(imagePixelSizeValueStr);
-                        if (imagePixelSizeValueStr.indexOf("nm") >= 0)
-                            imagePixelSize *= 1.0e-6;
-                        // set image pixel size
-                        event.currentTarget.imageInfo.imageResolution = imagePixelSize.toFixed(7);
-                    }
-                }
-
+            let imageInfo = new ImageInfo();
+            imageInfo.onloadImageFile = (imageInfo) => {
+                // add image info
+                gImageInfoList.push(imageInfo);
+                // update select images
+                selectImagesUpdate();
                 // image mask canvas
-                if (!gImageInfoAreasEditor.imageInfo)
-                    gImageInfoAreasEditor.setImageInfo(event.currentTarget.imageInfo);
-
-                if (!gImageInfoIntensityHistViewer.imageInfo) {
-                    gImageInfoIntensityHistViewer.setImageInfo(event.currentTarget.imageInfo);
-                    updateIntensityInputs();
+                if (!gImageInfoAreasEditor.imageInfo) {
+                    gImageInfoAreasEditor.setImageInfo(imageInfo);
                     updateResolutionInputs();
                 }
+                if (!gImageInfoIntensityHistViewer.imageInfo) {
+                    gImageInfoIntensityHistViewer.setImageInfo(imageInfo);
+                    updateIntensityInputs();
+                }
             }
-            fileReader.readAsArrayBuffer(imageInfo.fileRef);
-
-            // add image info
-            gImageInfoList.push(imageInfo);
+            imageInfo.loadImageFile(event.currentTarget.files[i]);
         }
-        // update select images
-        selectImagesUpdate();
     }
     inputImageFile.click();
 }
