@@ -1,3 +1,4 @@
+import * as Tiff from "tiff.js";
 import { SelectionInfo } from "./SelectionInfo"
 import { SelectionInfoType } from "./SelectionInfoType"
 import { SelectionInfoMode } from "./SelectionInfoMode"
@@ -30,7 +31,8 @@ export class ImageInfo {
     // image resolution
     public imageResolution: number = 1.0;
     // events
-    public onloadImageDataFile: (this: ImageInfo) => any = null;
+    public onloadImageFile: (this: ImageInfo, imageInfo: ImageInfo) => any = null;
+    public onloadImageDataFile: (this: ImageInfo, imageInfo: ImageInfo) => any = null;
 
     // constructor
     constructor(fileRef: File) {
@@ -55,6 +57,7 @@ export class ImageInfo {
         this.intensityMedium = 150;
         this.intensityHigh = 250;
         // events
+        this.onloadImageFile = null;
         this.onloadImageDataFile = null;
     }
 
@@ -98,7 +101,7 @@ export class ImageInfo {
         canvasHighResAreaCtx.fillStyle = "#FF8000";
         canvasHighResAreaCtx.strokeStyle = "#FF8000";
         canvasHighResAreaCtx.lineWidth = 4;
-        canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, this.HRWidth*4, this.HRHeight*4);
+        canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, this.HRWidth * 4, this.HRHeight * 4);
         // add pixel location on overview
         this.highResolutionImageData.push(pixelLocation);
     }
@@ -251,13 +254,52 @@ export class ImageInfo {
     }
 
     // loadImageDataFile
+    public loadImageFile(file: File): void {
+        // load from file
+        let fileReader = new FileReader();
+        fileReader.onload = event => {
+            // Tiff tag for smart SEM
+            const TIFFTAG_SEM = 34118;
+            // Tiff tag for Fibics
+            const TIFFTAG_Fibics = 51023;
+
+            let tiff = new Tiff({ buffer: fileReader.result });
+            let sam = tiff.getField(TIFFTAG_SEM);
+            let fibics = tiff.getField(TIFFTAG_Fibics);
+            this.copyFromCanvas(tiff.toCanvas());
+
+            // read SAM info
+            if (sam > 0) {
+                let enc = new TextDecoder("utf-8");
+                let fileString = enc.decode(fileReader.result as BufferSource);
+                let fileStrings = fileString.split("\n")
+                let imagePixelSizeIndex = fileStrings.findIndex(val => val.trim().startsWith("Image Pixel Size"));
+                if (imagePixelSizeIndex >= 0) {
+                    let imagePixelSizeSubstrs = fileStrings[imagePixelSizeIndex].split("=");
+                    let imagePixelSizeValueStr = imagePixelSizeSubstrs[1].trim();
+                    let imagePixelSize = parseFloat(imagePixelSizeValueStr);
+                    if (imagePixelSizeValueStr.indexOf("nm") >= 0)
+                        imagePixelSize *= 1.0e-6;
+                    // set image pixel size
+                    this.imageResolution = parseFloat(imagePixelSize.toFixed(7));
+                }
+            }
+
+            // call event
+            if (this.onloadImageFile)
+                this.onloadImageFile(this);
+
+        }
+        fileReader.readAsArrayBuffer(file);
+    }
+
+    // loadImageDataFile
     public loadImageDataFile(file: File): void {
         // store data file ref
         this.dataFileRef = file;
 
         // load from file
         let fileReader = new FileReader();
-        (fileReader as any).imageInfo = this;
         fileReader.onload = event => {
             let parser = new DOMParser();
             let xml = parser.parseFromString(fileReader.result.toString(), "text/xml");
@@ -275,7 +317,7 @@ export class ImageInfo {
             }
             // call event
             if (this.onloadImageDataFile)
-                this.onloadImageDataFile();
+                this.onloadImageDataFile(this);
         }
         fileReader.readAsText(file);
     }
