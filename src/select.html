@@ -14,7 +14,7 @@
             <input type="file" id="inputImageFile" style="display:none">
             <button id="buttonLoadImageDataFile">Load data</button>
             <input type="file" id="inputImageDataFile" style="display:none">
-            <select id="selectImages" onchange="selectImagesOnChange()"></select>
+            <select id="selectImages"></select>
             <div class="row-panel">
                 <a style="width: 130px">Image dims (px):</a>
                 <a>x: </a>
@@ -35,6 +35,21 @@
                 <a style="width: 130px">Image resolution:</a>
                 <input type="text" readonly id="inputImageResmm" style="width: 90px">
                 <a style="width: 30px">[mm]</a>
+            </div>
+            <br>
+            <!-- -/+ scale buttons -->
+            <button id="buttonLoadImageFileHR">Load high resolution images</button>
+            <input type="file" multiple id="inputImageFileHR" style="display:none">
+            <select id="selectImagesHR"></select>
+            <div style="background: #000000; border: 1px solid white">
+                <div style="flex-direction: row; text-align: center; background: #000000">
+                    <button id="buttonScaleDownHR">-</button>
+                    <button id="buttonScaleUpHR">+</button>
+                    <a id="scaleFactorHR">100%</a>
+                </div>
+                <div id="image_canvas_panel_high_res">
+                    <!-- content will be created programmaticaly -->
+                </div>
             </div>
         </div>
         <!-- center panel -->

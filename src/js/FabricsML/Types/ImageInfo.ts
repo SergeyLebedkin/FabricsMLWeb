@@ -20,6 +20,7 @@ export class ImageInfo {
     public selectionInfos: Array<SelectionInfo> = [];
     // high resolution image data
     public highResolutionImageData: Array<PixelLocationOnOverview> = [];
+    public highResolutionImageInfos: Array<ImageInfo> = [];
     // high resolution image suggestions settings
     public HRWidth: number = 30;
     public HRHeight: number = 23;
@@ -50,6 +51,7 @@ export class ImageInfo {
         this.selectionInfos = [];
         // high resolution image data
         this.highResolutionImageData = [];
+        this.highResolutionImageInfos = [];
         this.HRWidth = 30;
         this.HRHeight = 23;
         // intensity
@@ -103,6 +105,10 @@ export class ImageInfo {
         canvasHighResAreaCtx.strokeStyle = "#FF8000";
         canvasHighResAreaCtx.lineWidth = 4;
         canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, this.HRWidth * 4, this.HRHeight * 4);
+        canvasHighResAreaCtx.font = "60px Arial";
+        canvasHighResAreaCtx.textBaseline = "top";
+        canvasHighResAreaCtx.fillStyle = "#FF0000";
+        canvasHighResAreaCtx.fillText((this.highResolutionImageData.length + 1).toString(), pixelLocation.x + 20, pixelLocation.y + 20);
         // add pixel location on overview
         this.highResolutionImageData.push(pixelLocation);
     }
