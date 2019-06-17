@@ -112,7 +112,7 @@ function selectImagesHRUpdate() {
         // create new selector
         var optionImage = document.createElement('option');
         optionImage.value = imageInfo.highResolutionImageInfos[i];
-        optionImage.innerHTML = (i+1).toString() + " - " + gImageInfoList[i].fileRef.name;imageInfo.highResolutionImageInfos[i].fileRef.name;
+        optionImage.innerHTML = (i+1).toString() + " - " + imageInfo.highResolutionImageInfos[i].fileRef.name;
         selectImagesHR.appendChild(optionImage);
     }
 
