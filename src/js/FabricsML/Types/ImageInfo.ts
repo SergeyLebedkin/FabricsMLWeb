@@ -165,7 +165,7 @@ export class ImageInfo {
         // update borders data
         canvasBordersData.data.fill(0);
         canvasBordersCtx.putImageData(canvasBordersData, 0, 0);
-        for (let i = 0; i < canvasMaskData.data.length - 4; i += 4) {
+        for (let i = 0; i < canvasMaskData.data.length - this.canvasMask.width * 4 - 4; i += 4) {
             let x = Math.trunc((i / 4) % this.canvasMask.width);
             let y = Math.trunc((i / 4) / this.canvasMask.width);
             // horizontal border
