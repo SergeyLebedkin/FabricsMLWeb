@@ -40,8 +40,8 @@ html, body {
 }
 
 .highres_image_panel {
-    min-height: 650px;
-    max-height: 650px;
+    min-height: 620px;
+    max-height: 620px;
     background: #000000; 
     border: 1px solid white; 
 }

@@ -99,12 +99,15 @@ export class ImageInfo {
 
     // addPixelLocationOnOverview
     public addPixelLocationOnOverview(pixelLocation: PixelLocationOnOverview): void {
+        // get rect doms
+        let rectWidth: number = this.HRWidth / (this.imageResolution*1000);
+        let rectHeight: number = this.HRHeight / (this.imageResolution*1000);
         // get context
         let canvasHighResAreaCtx = this.canvasHighResArea.getContext("2d") as CanvasRenderingContext2D;
         canvasHighResAreaCtx.fillStyle = "#FF8000";
         canvasHighResAreaCtx.strokeStyle = "#FF8000";
         canvasHighResAreaCtx.lineWidth = 4;
-        canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, this.HRWidth * 4, this.HRHeight * 4);
+        canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, rectWidth, rectHeight);
         canvasHighResAreaCtx.font = "60px Arial";
         canvasHighResAreaCtx.textBaseline = "top";
         canvasHighResAreaCtx.fillStyle = "#FF0000";

@@ -73,6 +73,25 @@ function buttonLoadImageFileHRClick(event) {
     inputImageFileHR.click();
 }
 
+// buttonSaveImageFileHRClick
+function buttonSaveImageFileHRClick(event) {
+    // base check
+    if (!gImageInfoAreasEditor.imageInfo) return;
+
+    // get file name
+    var filename = gImageInfoAreasEditor.imageInfo.fileRef.name.substr(0, gImageInfoAreasEditor.imageInfo.fileRef.name.lastIndexOf('.'));
+
+    // generate xml string
+    var regionsString = '<?xml version="1.0" encoding="utf-8"?>' + "\r\n";
+    regionsString += "<FabricsMLData>" + "\r\n";
+    regionsString += gImageInfoAreasEditor.imageInfo.toStringXmlNode() + "\r\n";
+    regionsString += "<HighResolutionImageData>" + "\r\n";
+    regionsString += "</HighResolutionImageData>" + "\r\n";
+    regionsString += "</FabricsMLData>" + "\r\n";
+
+    downloadFile(regionsString, filename + "_regs.xml", 'text/plain');
+}
+
 // selectImagesUpdate
 function selectImagesUpdate() {
     // get selected index
@@ -112,7 +131,7 @@ function selectImagesHRUpdate() {
         // create new selector
         var optionImage = document.createElement('option');
         optionImage.value = imageInfo.highResolutionImageInfos[i];
-        optionImage.innerHTML = (i+1).toString() + " - " + imageInfo.highResolutionImageInfos[i].fileRef.name;
+        optionImage.innerHTML = (i + 1).toString() + " - " + imageInfo.highResolutionImageInfos[i].fileRef.name;
         selectImagesHR.appendChild(optionImage);
     }
 
@@ -121,6 +140,16 @@ function selectImagesHRUpdate() {
         selectedIndex = 0;
     selectImagesHR.selectedIndex = selectedIndex;
 }
+
+// buttonBlackListAddClick
+function buttonBlackListAddClick(event) {
+    console.log("Add");
+};
+
+// buttonBlackListRemoveClick
+function buttonBlackListRemoveClick(event) { 
+    console.log("Remove");
+};
 
 // scale down bnt click
 function buttonScaleDownClick(event) {
@@ -194,16 +223,32 @@ window.onload = (event) => {
     buttonLoadImageFile.addEventListener("click", buttonLoadImageFileClick);
     buttonLoadImageDataFile.addEventListener("click", buttonLoadImageDataFileClick);
     buttonLoadImageFileHR.addEventListener("click", buttonLoadImageFileHRClick);
+    buttonSaveImageFileHR.addEventListener("click", buttonSaveImageFileHRClick);
 
     // events
     selectImages.onchange = selectImagesOnChange;
+    buttonBlackListAdd.onclick = buttonBlackListAddClick;
+    buttonBlackListRemove.onclick = buttonBlackListRemoveClick;
     buttonScaleDown.onclick = buttonScaleDownClick;
     buttonScaleUp.onclick = buttonScaleUpClick;
     buttonScaleDownHR.onclick = buttonScaleDownHRClick;
     buttonScaleUpHR.onclick = buttonScaleUpHRClick;
-    selectImages.addEventListener("change",  selectImagesOnChange);
-    selectImagesHR.addEventListener("change",  selectImagesOnChangeHR);
+    selectImages.addEventListener("change", selectImagesOnChange);
+    selectImagesHR.addEventListener("change", selectImagesOnChangeHR);
 
     // update info
     updateResolutionInputs()
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// utils
+///////////////////////////////////////////////////////////////////////////////
+
+// downloadFile
+function downloadFile(text, name, type) {
+    var a = document.createElement("a");
+    var file = new Blob([text], { type: type });
+    a.href = URL.createObjectURL(file);
+    a.download = name;
+    a.click();
 }

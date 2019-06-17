@@ -131,9 +131,9 @@ function buttonSaveFabricsOnClick(event) {
     var regionsString = '<?xml version="1.0" encoding="utf-8"?>' + "\r\n";
     regionsString += "<FabricsMLData>" + "\r\n";
     regionsString += gImageInfoAreasEditor.imageInfo.toStringXmlNode() + "\r\n";
-    regionsString += "</FabricsMLData>" + "\r\n";
     regionsString += "<HighResolutionImageData>" + "\r\n";
     regionsString += "</HighResolutionImageData>" + "\r\n";
+    regionsString += "</FabricsMLData>" + "\r\n";
 
     downloadFile(regionsString, filename + ".xml", 'text/plain');
 }
