@@ -112,7 +112,7 @@ function selectImagesHRUpdate() {
         // create new selector
         var optionImage = document.createElement('option');
         optionImage.value = imageInfo.highResolutionImageInfos[i];
-        optionImage.innerHTML = imageInfo.highResolutionImageInfos[i].fileRef.name;
+        optionImage.innerHTML = (i+1).toString() + " - " + gImageInfoList[i].fileRef.name;imageInfo.highResolutionImageInfos[i].fileRef.name;
         selectImagesHR.appendChild(optionImage);
     }
 
@@ -183,6 +183,7 @@ window.onload = (event) => {
 
     // create ImageInfoAreasEditor for high res images
     gImageInfoAreasEditorHighRes = new ImageInfoAreasEditor(image_canvas_panel_high_res);
+    gImageInfoAreasEditorHighRes.setScale(0.25);
     gImageInfoAreasEditorHighRes.setMouseUsageMode(MouseUsageMode.DRAG)
     image_canvas_panel_high_res.addEventListener("mousemove", (event) => gImageInfoAreasEditorHighRes.onMouseMove(event));
     image_canvas_panel_high_res.addEventListener("mousedown", (event) => gImageInfoAreasEditorHighRes.onMouseDown(event));
