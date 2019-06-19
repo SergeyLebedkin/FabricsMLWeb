@@ -96,6 +96,9 @@ export class ImageInfoAreasEditor {
             let rect = this.imageCanvas.getBoundingClientRect();
             let mousePosX = event.clientX - rect.left;
             let mousePosY = event.clientY - rect.top;
+            // check for high resolution region
+            if (this.imageInfo.getMaskValueByCoord(mousePosX, mousePosY) > 0 )
+                console.log(this.imageInfo.getMaskValueByCoord(mousePosX, mousePosY));
             // draw rect started
             if ((this.mouseUsageMode === MouseUsageMode.DRAW) && (this.selectionInfoType === SelectionInfoType.RECT)) {
                 // set selection info

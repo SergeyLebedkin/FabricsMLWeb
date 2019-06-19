@@ -138,7 +138,7 @@ export class ImageInfo {
             // cet pixel location
             let pixelLocation = this.highResolutionImageData[i];
             // draw on canvas - mask
-            let hexString = rgbToHexColor(0, 0, i);
+            let hexString = rgbToHexColor(0, 0, i+1);
             canvasHighResMaskCtx.fillStyle = hexString;
             canvasHighResMaskCtx.strokeStyle = hexString;
             canvasHighResMaskCtx.fillRect(pixelLocation.x, pixelLocation.y, rectWidth, rectHeight);
@@ -294,6 +294,17 @@ export class ImageInfo {
 
         // store data to canvas
         canvasHiLightCtx.putImageData(canvasHiLightData, 0, 0);
+    }
+
+    // getMaskValueByCoord
+    public getMaskValueByCoord(x: number, y: number): number {
+        let canvasHighResMaskCtx = this.canvasHighResMask.getContext("2d");
+        let canvasHighResMaskData = canvasHighResMaskCtx.getImageData(0, 0, this.canvasMask.width, this.canvasMask.height);
+        let r = canvasHighResMaskData.data[y*this.canvasHighResMask.width*4 + x * 4 + 0];
+        let g = canvasHighResMaskData.data[y*this.canvasHighResMask.width*4 + x * 4 + 1];
+        let b = canvasHighResMaskData.data[y*this.canvasHighResMask.width*4 + x * 4 + 2];
+        let a = canvasHighResMaskData.data[y*this.canvasHighResMask.width*4 + x * 4 + 3];
+        return b;
     }
 
     // setIntensityLow
