@@ -99,21 +99,48 @@ export class ImageInfo {
 
     // addPixelLocationOnOverview
     public addPixelLocationOnOverview(pixelLocation: PixelLocationOnOverview): void {
-        // get rect doms
-        let rectWidth: number = this.HRWidth / (this.imageResolution*1000);
-        let rectHeight: number = this.HRHeight / (this.imageResolution*1000);
-        // get context
-        let canvasHighResAreaCtx = this.canvasHighResArea.getContext("2d") as CanvasRenderingContext2D;
-        canvasHighResAreaCtx.fillStyle = "#FF8000";
-        canvasHighResAreaCtx.strokeStyle = "#FF8000";
-        canvasHighResAreaCtx.lineWidth = 4;
-        canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, rectWidth, rectHeight);
-        canvasHighResAreaCtx.font = "60px Arial";
-        canvasHighResAreaCtx.textBaseline = "top";
-        canvasHighResAreaCtx.fillStyle = "#FF0000";
-        canvasHighResAreaCtx.fillText((this.highResolutionImageData.length + 1).toString(), pixelLocation.x + 20, pixelLocation.y + 20);
         // add pixel location on overview
         this.highResolutionImageData.push(pixelLocation);
+        // update High Res Area Canvas
+        this.updateHighResAreaCanvas();
+    }
+
+    // updateHighResAreaCanvas
+    public updateHighResAreaCanvas() {
+        // get rect doms
+        let rectWidth: number = this.HRWidth / (this.imageResolution * 1000);
+        let rectHeight: number = this.HRHeight / (this.imageResolution * 1000);
+
+        // get context
+        let canvasHighResAreaCtx = this.canvasHighResArea.getContext("2d") as CanvasRenderingContext2D;
+        //update high res image data
+        canvasHighResAreaCtx.globalAlpha = 0.0;
+        canvasHighResAreaCtx.fillStyle = "#00000";
+        canvasHighResAreaCtx.strokeStyle = "#00000";
+        canvasHighResAreaCtx.clearRect(0, 0, this.canvasHighResArea.width, this.canvasHighResArea.height);
+        canvasHighResAreaCtx.globalAlpha = 1.0;
+        for (let i = 0; i < this.highResolutionImageData.length; i++) {
+            // cet pixel location
+            let pixelLocation = this.highResolutionImageData[i];
+            // draw on canvas
+            canvasHighResAreaCtx.fillStyle = "#FF8000";
+            canvasHighResAreaCtx.strokeStyle = "#FF8000";
+            if (pixelLocation.inBlackList) {
+                canvasHighResAreaCtx.fillStyle = "#808080";
+                canvasHighResAreaCtx.strokeStyle = "#808080";
+            }
+            canvasHighResAreaCtx.lineWidth = 4;
+            canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, rectWidth, rectHeight);
+            canvasHighResAreaCtx.font = "60px Arial";
+            canvasHighResAreaCtx.textBaseline = "top";
+            canvasHighResAreaCtx.fillStyle = "#FF0000";
+            canvasHighResAreaCtx.strokeStyle = "#FF0000";
+            if (pixelLocation.inBlackList) {
+                canvasHighResAreaCtx.fillStyle = "#808080";
+                canvasHighResAreaCtx.strokeStyle = "#808080";
+            }
+            canvasHighResAreaCtx.fillText((i + 1).toString(), pixelLocation.x + 20, pixelLocation.y + 20);
+        }
     }
 
     // updateHilightCanvas
@@ -346,12 +373,46 @@ export class ImageInfo {
         node += '    <ImageName FileName="' + this.fileRef.name + '"></ImageName>' + "\r\n";
         node += '    <ImageBasename FileBasename="' + filename + '"></ImageBasename>' + "\r\n";
         node += '    <IntensityBoundary LowIntensity="' + this.intensityLow + '" MediumIntensity="' + this.intensityMedium + '" HighIntensity="' + this.intensityHigh + '"></IntensityBoundary>' + "\r\n";
+
         node += "    <AreaSelections>" + "\r\n";
-        this.selectionInfos.forEach(info => {
-            node += info.toStringXmlNode() + "\r\n";
-        })
+        this.selectionInfos.forEach(info => node += info.toStringXmlNode() + "\r\n");
         node += "    </AreaSelections>" + "\r\n";
         node += "  </ImageData>";
+        return node;
+    }
+
+    // toStringXmlNodeHiResData
+    public toStringXmlNodeHiResData(): string {
+        // exract file name
+        var filename = this.fileRef.name.substr(0, this.fileRef.name.lastIndexOf('.'));
+
+        // generate xml node
+        let node: string = "";
+        node += "  <ImageData>" + "\r\n"
+        node += '    <ImageName FileName="' + this.fileRef.name + '"></ImageName>' + "\r\n";
+        node += '    <ImageBasename FileBasename="' + filename + '"></ImageBasename>' + "\r\n";
+        node += '    <IntensityBoundary LowIntensity="' + this.intensityLow + '" MediumIntensity="' + this.intensityMedium + '" HighIntensity="' + this.intensityHigh + '"></IntensityBoundary>' + "\r\n";
+        node += "  </ImageData>";
+
+        node += "  <AreaSelections>" + "\r\n";
+        this.selectionInfos.forEach(info => node += info.toStringXmlNode() + "\r\n");
+        node += "  </AreaSelections>" + "\r\n";
+
+        node += "  <HighResolutionImageData>" + "\r\n";
+        this.highResolutionImageData.forEach(info => node += '    <PixelLocationOnOverview x="' + info.x + '" y="' + info.y + '"></PixelLocationOnOverview>' + "\r\n");
+        node += "  </HighResolutionImageData>" + "\r\n";
+
+        node += "  <HighResolutionImageFilenames>" + "\r\n";
+        this.highResolutionImageInfos.forEach(info => node += '    <HighResolutionFilename Filename="' + info.fileRef.name + '"></HighResolutionFilename>' + "\r\n");
+        node += "  </HighResolutionImageFilenames>" + "\r\n";
+
+        node += "  <HighResolutionImageSelection>" + "\r\n";
+        this.highResolutionImageData.forEach((info, index) => { if (!info.inBlackList) node += '     <ImageSelection id="' + index + '"></ImageSelection>' + "\r\n"; });
+        node += "  </HighResolutionImageSelection>" + "\r\n";
+
+        node += "  <BlacklistImages>" + "\r\n";
+        this.highResolutionImageData.forEach((info, index) => { if (info.inBlackList) node += '     <BlacklistImage id="' + index + '"></BlacklistImage>' + "\r\n"; });
+        node += "  </BlacklistImages>" + "\r\n";
         return node;
     }
 }

@@ -84,9 +84,7 @@ function buttonSaveImageFileHRClick(event) {
     // generate xml string
     var regionsString = '<?xml version="1.0" encoding="utf-8"?>' + "\r\n";
     regionsString += "<FabricsMLData>" + "\r\n";
-    regionsString += gImageInfoAreasEditor.imageInfo.toStringXmlNode() + "\r\n";
-    regionsString += "<HighResolutionImageData>" + "\r\n";
-    regionsString += "</HighResolutionImageData>" + "\r\n";
+    regionsString += gImageInfoAreasEditor.imageInfo.toStringXmlNodeHiResData() + "\r\n";
     regionsString += "</FabricsMLData>" + "\r\n";
 
     downloadFile(regionsString, filename + "_regs.xml", 'text/plain');
@@ -143,12 +141,18 @@ function selectImagesHRUpdate() {
 
 // buttonBlackListAddClick
 function buttonBlackListAddClick(event) {
-    console.log("Add");
+    if (selectImagesHR.selectedIndex < 0) return;
+    gImageInfoAreasEditor.imageInfo.highResolutionImageData[selectImagesHR.selectedIndex].inBlackList = true;
+    gImageInfoAreasEditor.imageInfo.updateHighResAreaCanvas();
+    gImageInfoAreasEditor.drawImageInfo();
 };
 
 // buttonBlackListRemoveClick
 function buttonBlackListRemoveClick(event) { 
-    console.log("Remove");
+    if (selectImagesHR.selectedIndex < 0) return;
+    gImageInfoAreasEditor.imageInfo.highResolutionImageData[selectImagesHR.selectedIndex].inBlackList = false;
+    gImageInfoAreasEditor.imageInfo.updateHighResAreaCanvas();
+    gImageInfoAreasEditor.drawImageInfo();
 };
 
 // scale down bnt click
