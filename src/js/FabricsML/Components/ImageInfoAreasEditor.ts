@@ -308,6 +308,7 @@ export class ImageInfoAreasEditor {
                 this.imageCanvasCtx.drawImage(this.imageInfo.canvasBorders, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
                 this.imageCanvasCtx.globalAlpha = 1.0;
                 this.imageCanvasCtx.drawImage(this.imageInfo.canvasHighResArea, 0, 0, this.imageCanvas.width, this.imageCanvas.height);
+                this.imageCanvasCtx.globalAlpha = 1.0;
             }
         }
     }

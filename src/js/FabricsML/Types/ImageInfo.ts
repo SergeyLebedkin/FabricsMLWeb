@@ -72,22 +72,28 @@ export class ImageInfo {
         // copy data
         let canvasImageCtx = this.canvasImage.getContext("2d");
         canvasImageCtx.drawImage(canvas, 0, 0);
+        // update canvases
+        this.updateAllCanvases();
+    }
+
+    // updateAllCanvases
+    private updateAllCanvases(): void {
         // create additional canvases
-        this.canvasMask.width = canvas.width;
-        this.canvasMask.height = canvas.height;
-        this.canvasHiLight.width = canvas.width;
-        this.canvasHiLight.height = canvas.height;
-        this.canvasBorders.width = canvas.width;
-        this.canvasBorders.height = canvas.height;
-        this.canvasHighResArea.width = canvas.width;
-        this.canvasHighResArea.height = canvas.height;
-        this.canvasHighResMask.width = canvas.width;
-        this.canvasHighResMask.height = canvas.height;
+        this.canvasMask.width = this.canvasImage.width;
+        this.canvasMask.height = this.canvasImage.height;
+        this.canvasHiLight.width = this.canvasImage.width;
+        this.canvasHiLight.height = this.canvasImage.height;
+        this.canvasBorders.width = this.canvasImage.width;
+        this.canvasBorders.height = this.canvasImage.height;
+        this.canvasHighResArea.width = this.canvasImage.width;
+        this.canvasHighResArea.height = this.canvasImage.height;
+        this.canvasHighResMask.width = this.canvasImage.width;
+        this.canvasHighResMask.height = this.canvasImage.height;
         // update data
         this.updateHilightCanvas();
         this.updateBordersCanvas();
         this.updateIntensity();
-
+        this.updateHighResAreaCanvas();
     }
 
     // addSelectionInfo
@@ -115,16 +121,28 @@ export class ImageInfo {
 
         // get context
         let canvasHighResAreaCtx = this.canvasHighResArea.getContext("2d") as CanvasRenderingContext2D;
+        let canvasHighResMaskCtx = this.canvasHighResMask.getContext("2d") as CanvasRenderingContext2D;
         //update high res image data
         canvasHighResAreaCtx.globalAlpha = 0.0;
         canvasHighResAreaCtx.fillStyle = "#00000";
         canvasHighResAreaCtx.strokeStyle = "#00000";
         canvasHighResAreaCtx.clearRect(0, 0, this.canvasHighResArea.width, this.canvasHighResArea.height);
         canvasHighResAreaCtx.globalAlpha = 1.0;
+        //update high res image data
+        canvasHighResMaskCtx.globalAlpha = 0.0;
+        canvasHighResMaskCtx.fillStyle = "#00000";
+        canvasHighResMaskCtx.strokeStyle = "#00000";
+        canvasHighResMaskCtx.clearRect(0, 0, this.canvasHighResArea.width, this.canvasHighResArea.height);
+        canvasHighResMaskCtx.globalAlpha = 1.0;
         for (let i = 0; i < this.highResolutionImageData.length; i++) {
             // cet pixel location
             let pixelLocation = this.highResolutionImageData[i];
-            // draw on canvas
+            // draw on canvas - mask
+            let hexString = rgbToHexColor(0, 0, i);
+            canvasHighResMaskCtx.fillStyle = hexString;
+            canvasHighResMaskCtx.strokeStyle = hexString;
+            canvasHighResMaskCtx.fillRect(pixelLocation.x, pixelLocation.y, rectWidth, rectHeight);
+            // draw on canvas - border
             canvasHighResAreaCtx.fillStyle = "#FF8000";
             canvasHighResAreaCtx.strokeStyle = "#FF8000";
             if (pixelLocation.inBlackList) {
@@ -133,6 +151,7 @@ export class ImageInfo {
             }
             canvasHighResAreaCtx.lineWidth = 4;
             canvasHighResAreaCtx.strokeRect(pixelLocation.x, pixelLocation.y, rectWidth, rectHeight);
+            // draw on canvas - text
             canvasHighResAreaCtx.font = "60px Arial";
             canvasHighResAreaCtx.textBaseline = "top";
             canvasHighResAreaCtx.fillStyle = "#FF0000";
@@ -417,4 +436,18 @@ export class ImageInfo {
         node += "  </BlacklistImages>" + "\r\n";
         return node;
     }
+}
+
+// valueToHex
+function valueToHex(value: number): string {
+    var hex = Number(value).toString(16);
+    return hex.length < 2 ? "0" + hex : hex;
+};
+
+// rgbToHexColor
+function rgbToHexColor(r: number, g: number, b: number): string {
+    var red = valueToHex(r);
+    var green = valueToHex(g);
+    var blue = valueToHex(b);
+    return "#" + red + green + blue;
 }
