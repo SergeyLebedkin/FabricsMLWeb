@@ -28,7 +28,7 @@ function buttonLoadImageFileClick(event) {
                     updateResolutionInputs();
                 }
             }
-            imageInfo.loadImageFile(event.currentTarget.files[i], true);
+            imageInfo.loadImageFile(event.currentTarget.files[i]);
         }
     }
     inputImageFile.click();
@@ -67,7 +67,7 @@ function buttonLoadImageFileHRClick(event) {
                     gImageInfoAreasEditorHighRes.setImageInfo(imageInfo);
                 }
             }
-            imageInfo.loadImageFile(event.currentTarget.files[i], false);
+            imageInfo.loadImageFile(event.currentTarget.files[i]);
         }
     }
     inputImageFileHR.click();
