@@ -65,27 +65,30 @@ export class ImageInfo {
     }
 
     // copyFromCanvas
-    public copyFromCanvas(canvas: HTMLCanvasElement): void {
+    public copyFromCanvas(canvas: HTMLCanvasElement, createDataCanvases: boolean = true): void {
         // set sizes
         this.canvasImage.width = canvas.width;
         this.canvasImage.height = canvas.height;
-        this.canvasMask.width = canvas.width;
-        this.canvasMask.height = canvas.height;
-        this.canvasHiLight.width = canvas.width;
-        this.canvasHiLight.height = canvas.height;
-        this.canvasBorders.width = canvas.width;
-        this.canvasBorders.height = canvas.height;
-        this.canvasHighResArea.width = canvas.width;
-        this.canvasHighResArea.height = canvas.height;
-        this.canvasHighResMask.width = canvas.width;
-        this.canvasHighResMask.height = canvas.height;
         // copy data
         let canvasImageCtx = this.canvasImage.getContext("2d");
         canvasImageCtx.drawImage(canvas, 0, 0);
-        // update data
-        this.updateHilightCanvas();
-        this.updateBordersCanvas();
-        this.updateIntensity();
+        // create additional canvases
+        if (createDataCanvases) {
+            this.canvasMask.width = canvas.width;
+            this.canvasMask.height = canvas.height;
+            this.canvasHiLight.width = canvas.width;
+            this.canvasHiLight.height = canvas.height;
+            this.canvasBorders.width = canvas.width;
+            this.canvasBorders.height = canvas.height;
+            this.canvasHighResArea.width = canvas.width;
+            this.canvasHighResArea.height = canvas.height;
+            this.canvasHighResMask.width = canvas.width;
+            this.canvasHighResMask.height = canvas.height;
+            // update data
+            this.updateHilightCanvas();
+            this.updateBordersCanvas();
+            this.updateIntensity();
+        }
     }
 
     // addSelectionInfo
@@ -291,7 +294,7 @@ export class ImageInfo {
     }
 
     // loadImageDataFile
-    public loadImageFile(file: File): void {
+    public loadImageFile(file: File, createDataCanvases: boolean = true): void {
         // store data file ref
         this.fileRef = file;
 
@@ -306,7 +309,7 @@ export class ImageInfo {
             let tiff = new Tiff({ buffer: fileReader.result });
             let sam = tiff.getField(TIFFTAG_SEM);
             let fibics = tiff.getField(TIFFTAG_Fibics);
-            this.copyFromCanvas(tiff.toCanvas());
+            this.copyFromCanvas(tiff.toCanvas(), createDataCanvases);
 
             // read SAM info
             if (sam > 0) {

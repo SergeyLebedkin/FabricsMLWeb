@@ -152,8 +152,8 @@ function updateIntensityInputs() {
 
 // updateResolutionInputs
 function updateResolutionInputs() {
-    if (gImageInfoIntensityHistViewer.imageInfo) {
-        let imageInfo = gImageInfoIntensityHistViewer.imageInfo;
+    if (gImageInfoAreasEditor.imageInfo) {
+        let imageInfo = gImageInfoAreasEditor.imageInfo;
         inputImageDimXpx.value = imageInfo.canvasImage.width;
         inputImageDimYpx.value = imageInfo.canvasImage.height;
         inputImageDimXmm.value = (imageInfo.canvasImage.width * imageInfo.imageResolution).toFixed(5);
