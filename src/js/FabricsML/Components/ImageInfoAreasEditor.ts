@@ -1,4 +1,5 @@
 import { ImageInfo } from "../Types/ImageInfo"
+import { PixelLocationOnOverview } from "../Types/PixelLocationOnOverview"
 import { MouseUsageMode } from "../Types/MouseUsageMode"
 import { SelectionInfoMode } from "../Types/SelectionInfoMode"
 import { SelectionInfoType } from "../Types/SelectionInfoType"
@@ -30,7 +31,8 @@ export class ImageInfoAreasEditor {
     // main canvas
     private imageCanvas: HTMLCanvasElement = null;
     private imageCanvasCtx: CanvasRenderingContext2D = null;
-
+    // events
+    public onclickHighResolutionArea: (this: ImageInfoAreasEditor, imageInfo: ImageInfo, areaIndex: number) => any = null;
     // constructor
     constructor(parent: HTMLDivElement) {
         // setup parent
@@ -97,8 +99,10 @@ export class ImageInfoAreasEditor {
             let mousePosX = event.clientX - rect.left;
             let mousePosY = event.clientY - rect.top;
             // check for high resolution region
-            if (this.imageInfo.getMaskValueByCoord(mousePosX, mousePosY) > 0 )
-                console.log(this.imageInfo.getMaskValueByCoord(mousePosX, mousePosY));
+            let highResAreaIndex = this.imageInfo.getMaskValueByCoord(mousePosX, mousePosY);
+            if (highResAreaIndex)
+                if (this.onclickHighResolutionArea)
+                    this.onclickHighResolutionArea(this.imageInfo, highResAreaIndex);
             // draw rect started
             if ((this.mouseUsageMode === MouseUsageMode.DRAW) && (this.selectionInfoType === SelectionInfoType.RECT)) {
                 // set selection info

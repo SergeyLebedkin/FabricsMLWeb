@@ -212,12 +212,14 @@ function selectImagesOnChange(event) {
 
 // selectImagesOnChangeHR
 function selectImagesOnChangeHR(event) {
-    gImageInfoAreasEditorHighRes.setImageInfo(gImageInfoList[selectImages.selectedIndex].highResolutionImageInfos[selectImagesHR.selectedIndex]);
+    if (gImageInfoAreasEditor.imageInfo) {
+    if ((selectImagesHR.selectedIndex >=0) && (selectImagesHR.selectedIndex < gImageInfoAreasEditor.imageInfo.highResolutionImageInfos.length))
+        gImageInfoAreasEditorHighRes.setImageInfo(gImageInfoList[selectImages.selectedIndex].highResolutionImageInfos[selectImagesHR.selectedIndex]);
+    }
 }
 
 // selectHighResAreaOnChange
 function selectHighResAreaOnChange(event) {
-    console.log("Hello")
 }
 
 // updateResolutionInputs
@@ -232,12 +234,20 @@ function updateResolutionInputs() {
     }
 }
 
+// onclickHighResolutionArea
+function onclickHighResolutionArea(imageInfo, index) {
+    selectImagesHR.selectedIndex = index-1;
+    selectImagesOnChangeHR()
+    selectHighResArea.selectedIndex = index-1;
+    selectHighResAreaOnChange();
+}
 
 // window - onload
 window.onload = (event) => {
     // create ImageInfoAreasEditor
     gImageInfoAreasEditor = new ImageInfoAreasEditor(image_canvas_panel);
-    gImageInfoAreasEditor.setMouseUsageMode(MouseUsageMode.DRAG)
+    gImageInfoAreasEditor.setMouseUsageMode(MouseUsageMode.DRAG);
+    gImageInfoAreasEditor.onclickHighResolutionArea = (imageInfo, index) => onclickHighResolutionArea(imageInfo, index);
     image_canvas_panel.addEventListener("mousemove", (event) => gImageInfoAreasEditor.onMouseMove(event));
     image_canvas_panel.addEventListener("mousedown", (event) => gImageInfoAreasEditor.onMouseDown(event));
     image_canvas_panel.addEventListener("mouseup", (event) => gImageInfoAreasEditor.onMouseUp(event));
