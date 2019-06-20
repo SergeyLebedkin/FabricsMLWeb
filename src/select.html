@@ -37,14 +37,16 @@
                 <a style="width: 30px">[mm]</a>
             </div>
             <br>
-            <!-- -/+ scale buttons -->
-            <button id="buttonLoadImageFileHR">Load high resolution images</button>
-            <input type="file" multiple id="inputImageFileHR" style="display:none">
-            <select id="selectImagesHR"></select>
+            <!-- black list -->
             <div class="row-panel">
+                <select id="selectHighResArea" style="width: 100%"></select>
                 <button id="buttonBlackListAdd" style="width: 100%">Add to black list</button>
                 <button id="buttonBlackListRemove" style="width: 100%">Remove from black list</button>
             </div>
+            <br>
+            <button id="buttonLoadImageFileHR">Load high resolution images</button>
+            <input type="file" multiple id="inputImageFileHR" style="display:none">
+            <select id="selectImagesHR"></select>
             <div class="highres_image_panel">
                 <div style="flex-direction: row; text-align: center">
                     <button id="buttonScaleDownHR">-</button>

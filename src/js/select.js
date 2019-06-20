@@ -44,6 +44,7 @@ function buttonLoadImageDataFileClick(event) {
     inputImageDataFile.onchange = (event) => {
         gImageInfoAreasEditor.imageInfo.onloadImageDataFile = (imageInfo) => {
             gImageInfoAreasEditor.drawImageInfo();
+            selectHighResAreaUpdate();
         }
         gImageInfoAreasEditor.imageInfo.loadImageDataFile(event.currentTarget.files[0]);
     }
@@ -114,6 +115,30 @@ function selectImagesUpdate() {
     updateResolutionInputs();
 }
 
+// selectHighResAreaUpdate
+function selectHighResAreaUpdate() {
+    // get selected index
+    var selectedIndex = selectHighResArea.selectedIndex;
+
+    // clear childs
+    while (selectHighResArea.firstChild) { selectHighResArea.removeChild(selectHighResArea.firstChild); }
+    if (!gImageInfoAreasEditor.imageInfo) return;
+
+    // add items
+    for (var i = 0; i < gImageInfoAreasEditor.imageInfo.highResolutionImageData.length; i++) {
+        // create new selector
+        var optionImage = document.createElement('option');
+        optionImage.value = gImageInfoAreasEditor.imageInfo.highResolutionImageData[i];
+        optionImage.innerHTML = (i+1).toString();
+        selectHighResArea.appendChild(optionImage);
+    }
+
+    // set selected index
+    if ((selectedIndex < 0) && (gImageInfoList.length > 0))
+        selectedIndex = 0;
+        selectHighResArea.selectedIndex = selectedIndex;
+}
+
 // selectImagesHRUpdate
 function selectImagesHRUpdate() {
     if (!gImageInfoAreasEditor.imageInfo) return;
@@ -141,16 +166,16 @@ function selectImagesHRUpdate() {
 
 // buttonBlackListAddClick
 function buttonBlackListAddClick(event) {
-    if (selectImagesHR.selectedIndex < 0) return;
-    gImageInfoAreasEditor.imageInfo.highResolutionImageData[selectImagesHR.selectedIndex].inBlackList = true;
+    if (selectHighResArea.selectedIndex < 0) return;
+    gImageInfoAreasEditor.imageInfo.highResolutionImageData[selectHighResArea.selectedIndex].inBlackList = true;
     gImageInfoAreasEditor.imageInfo.updateHighResAreaCanvas();
     gImageInfoAreasEditor.drawImageInfo();
 };
 
 // buttonBlackListRemoveClick
-function buttonBlackListRemoveClick(event) { 
-    if (selectImagesHR.selectedIndex < 0) return;
-    gImageInfoAreasEditor.imageInfo.highResolutionImageData[selectImagesHR.selectedIndex].inBlackList = false;
+function buttonBlackListRemoveClick(event) {
+    if (selectHighResArea.selectedIndex < 0) return;
+    gImageInfoAreasEditor.imageInfo.highResolutionImageData[selectHighResArea.selectedIndex].inBlackList = false;
     gImageInfoAreasEditor.imageInfo.updateHighResAreaCanvas();
     gImageInfoAreasEditor.drawImageInfo();
 };
@@ -188,6 +213,10 @@ function selectImagesOnChange(event) {
 // selectImagesOnChangeHR
 function selectImagesOnChangeHR(event) {
     gImageInfoAreasEditorHighRes.setImageInfo(gImageInfoList[selectImages.selectedIndex].highResolutionImageInfos[selectImagesHR.selectedIndex]);
+}
+
+// selectHighResAreaOnChange
+function selectHighResAreaOnChange(event) {
     console.log("Hello")
 }
 
@@ -231,6 +260,7 @@ window.onload = (event) => {
 
     // events
     selectImages.onchange = selectImagesOnChange;
+    selectHighResArea.onchange = selectHighResAreaOnChange;
     buttonBlackListAdd.onclick = buttonBlackListAddClick;
     buttonBlackListRemove.onclick = buttonBlackListRemoveClick;
     buttonScaleDown.onclick = buttonScaleDownClick;
