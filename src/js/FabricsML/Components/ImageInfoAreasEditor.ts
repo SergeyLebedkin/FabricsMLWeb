@@ -99,7 +99,7 @@ export class ImageInfoAreasEditor {
             let mousePosX = event.clientX - rect.left;
             let mousePosY = event.clientY - rect.top;
             // check for high resolution region
-            let highResAreaIndex = this.imageInfo.getMaskValueByCoord(mousePosX, mousePosY);
+            let highResAreaIndex = this.imageInfo.getMaskValueByCoord(mousePosX/this.imageScale, mousePosY/this.imageScale);
             if (highResAreaIndex)
                 if (this.onclickHighResolutionArea)
                     this.onclickHighResolutionArea(this.imageInfo, highResAreaIndex);
